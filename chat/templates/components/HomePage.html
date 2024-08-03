@@ -1,0 +1,106 @@
+{% load static %}
+<section class="main">
+  <div>
+    <center>
+      <h1>Hello, Welcome {{request.user}}</h1>
+    </center>
+  {% if request.user.is_authenticated %}
+  <center> Logout the chat Page <a href="{% url 'logout-user' %}">Logout</a></center>
+  {% endif %}
+  </div>
+
+  <div class="homeMessageSquare" id="messageMenu">
+    <img
+      src="{% static 'images/messageSquare.svg' %}"
+      alt=""
+      class="homeMessageSquareSvg"
+    />
+  </div>
+
+  <!-- popup chat list -->
+  <div class="popMenu" id="popMenu">
+    <div id="popMenu1" class="popMenu1">
+      {% block searchBar %}
+      {% include '../assets/SearchBar.html' %}
+      {% endblock %}
+      <!-- searchresults comes here -->
+      <div class="searchResultContainer" style="background-color: rgba(224, 223, 221, 0.364); padding: 5px; margin-top: 10px; border-radius: 10px; display: none; " id="searchResultsTitle" >
+      <h1 style="font-size: 14px; text-align: center">Search results</h1>
+      <div id="searchResults" class="searchResults">
+      
+      </div>
+    </div>
+    <!-- user list comes here -->
+        <div class="userListContainer">
+          {% for user in online_users %}
+          <div class="homePageUsercard" id="loadChatMenuBtn" data-username="{{ user.username }}">
+            <div class="avatar-container">
+              <img
+                class="homePageUsercardImage"
+                src="https://plus.unsplash.com/premium_photo-1671656349322-41de944d259b?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt="User Avatar"
+              />
+            </div>
+            <div class="popMenuDescDiv">
+              <h4 class="popMenuUserName">{{ user.username }}</h4>
+              <p class="popMenuMessagePreview">
+                <span class="highlightedUserName">Sharan&nbsp;</span> hey how are you, have you seen my message
+              </p>
+            </div>
+          </div>
+          
+          {% endfor %}
+          
+          
+        </div>
+     
+    </div>
+    <div id="chatMenuContainer" class="chatMenuContainer">
+      
+    </div>
+  </div>
+
+</section>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var messageMenu = document.getElementById("messageMenu");
+    var popMenu = document.getElementById("popMenu");
+
+    // Toggle the visibility of the menu on click
+    messageMenu.addEventListener("click", function () {
+      console.log("clicked");
+      if (popMenu.style.display === "none" || popMenu.style.display === "") {
+        popMenu.style.display = "flex";
+      } else {
+        popMenu.style.display = "none";
+      }
+    });
+
+    // Hide the menu if clicked outside of it
+    // document.addEventListener("click", function (event) {
+    //   if (
+    //     !messageMenu.contains(event.target) &&
+    //     !popMenu.contains(event.target)
+    //   ) {
+    //     popMenu.style.display = "none";
+    //   }
+    // });
+  });
+
+</script>
+<script>
+   document.addEventListener('DOMContentLoaded', function () {
+  const userCards = document.querySelectorAll('.homePageUsercard');
+  userCards.forEach(card => {
+    const username = card.getAttribute('data-username');
+    card.addEventListener('click', function () {
+      initiatePrivateChat(username);
+    });
+  });
+});
+
+</script>
+
+<!-- scrript for adding and removing div  -->
+
+

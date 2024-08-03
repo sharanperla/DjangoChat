@@ -1,0 +1,442 @@
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+*::-webkit-scrollbar {
+  display: none;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-width: 100vw;
+}
+.header {
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  height: 30px; /* Fixed height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main {
+  background-color: #e9ecef;
+  padding: 20px;
+  flex: 1; /* Grow to fill available space */
+  position: relative;
+}
+
+/* .button1 {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: rgb(20, 20, 20);
+    border: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 0px 0px 4px rgba(180, 160, 255, 0.253);
+    cursor: pointer;
+    transition-duration: 0.3s;
+    overflow: hidden;
+    position: relative;
+    bottom: 0;
+    right: 0;
+  } */
+
+/* .svgIcon {
+    width: 12px;
+    transition-duration: 0.3s;
+  } */
+/* 
+  .svgIcon path {
+    fill: white;
+  } */
+
+/* .button1:hover {
+    width: 140px;
+    border-radius: 50px;
+    transition-duration: 0.3s;
+    background-color: rgb(181, 160, 255);
+    align-items: center;
+  } */
+/* 
+  .button1:hover .svgIcon {
+    width: 20px;
+    transition-duration: 0.3s;
+    transform: translateY(-200%);
+  } */
+
+/* .button1::before {
+    position: absolute;
+    bottom: -20px;
+    content: "Back to Top";
+    color: white;
+    transition-duration: .3s;
+    font-size: 0px;
+  } */
+
+/* .button1:hover::before {
+    font-size: 13px;
+    opacity: 1;
+    bottom: unset;
+    transform: translateY(-30px);
+    transition-duration: 0.3s;
+  }  */
+
+.homeMessageSquare {
+  width: 2rem;
+  height: 2rem;
+  background: #27b0f5;
+  padding: 0.5rem;
+  border-radius: 10px;
+  position: absolute;
+  bottom: 30px;
+  left: 30px;
+}
+
+/* styling for the pop-up menu */
+.popMenu {
+  display: none;
+  position: absolute;
+  top: 10px;
+  left: 30px;
+  /* background-color: white; 
+  border: 1px solid #ddd; 
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);  */
+  z-index: 1000;
+  /* padding: 0.5rem;
+  border-radius: 10px; */
+  height: 80%;
+  /* padding: 1rem;
+  overflow: hidden ;
+  overflow-y: scroll;
+  scroll-behavior: smooth; */
+  gap: 5px;
+}
+
+.popMenu1 {
+  background-color: white;
+  border: 1px solid #ddd;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 1rem;
+  overflow: hidden;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  height: 100%;
+}
+
+.chatMenuContainer {
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.chatMenu {
+  background-color: white;
+  border: 1px solid #ddd;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  width: 20vw;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+}
+.chatMenuXsvg {
+  width: 0.5rem;
+  height: 0.5rem;
+  position: absolute;
+  padding: 5px;
+  border-radius: 50%;
+  background-color: aqua;
+  right: 0;
+  top: 0;
+}
+
+.chatMenuHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* width: 100%; */
+  border-bottom: 1px solid;
+}
+.chatMenuAvatarAndDesc {
+  display: flex;
+  align-items: center;
+}
+
+.chatMenuUserName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.chatMenu::-webkit-scrollbar {
+  display: none;
+}
+
+.userListContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 0.5rem;
+}
+
+/* Each user's card */
+.homePageUsercard {
+  border: 1px solid #dddddd92;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.01);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.homePageUsercard:hover {
+  background-color: #e4e4e4; /* Light gray background on hover */
+}
+
+/* Avatar styles */
+.avatar-container {
+  width: 50px; /* Avatar size */
+  height: 50px; /* Avatar size */
+  overflow: hidden; /* Prevent overflow */
+  border-radius: 50%; /* Circular shape */
+  flex-shrink: 0; /* Prevent shrinking */
+  margin-right: 10px; /* Space between avatar and text */
+}
+
+.homePageUsercardImage {
+  width: 100%; /* Cover entire container */
+  height: 100%; /* Cover entire container */
+  object-fit: cover; /* Cover area without distorting */
+}
+
+/* Text content */
+.popMenuDescDiv {
+  flex-grow: 1;
+  max-width: 80%;
+}
+
+.popMenuUserName {
+  margin: 0; /* Remove default margin */
+  font-size: 16px; /* Font size for names */
+  font-weight: 600; /* Bold text */
+  color: #333; /* Dark text color */
+  white-space: nowrap; /* Prevent wrapping */
+  overflow: hidden; /* Prevent overflow */
+  text-overflow: ellipsis; /* Add ellipsis for overflow */
+}
+
+.highlightedUserName {
+  font-weight: 900;
+  color: black;
+}
+
+.popMenuMessagePreview {
+  margin: 0; /* Remove default margin */
+  font-size: 14px; /* Font size for previews */
+  color: #666; /* Gray text color */
+  white-space: nowrap; /* Prevent wrapping */
+  overflow: hidden; /* Prevent overflow */
+  text-overflow: ellipsis; /* Add ellipsis for overflow */
+}
+
+/* searchBar */
+.searcBar {
+  display: flex;
+  line-height: 28px;
+  align-items: center;
+  position: relative;
+  max-width: 100%;
+  margin: auto;
+}
+
+.searchInput {
+  width: 100%;
+  height: 40px;
+  line-height: 28px;
+  padding: 0 1rem;
+  padding-left: 2.5rem;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  outline: none;
+  background-color: #f3f3f4;
+  color: #0d0c22;
+  transition: 0.3s ease;
+}
+
+.searchInput::placeholder {
+  color: #9e9ea7;
+}
+
+.searchInput:focus,
+input:hover {
+  outline: none;
+  border-color: rgba(234, 76, 137, 0.4);
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgb(234 76 137 / 10%);
+}
+
+.searchSvg {
+  position: absolute;
+  left: 1rem;
+  fill: #9e9ea7;
+  width: 1rem;
+  height: 1rem;
+}
+
+.xsquare {
+  width: 0.5rem;
+  height: 0.5rem;
+  object-fit: contain;
+}
+.searchResultUserCard{
+    border: 1px solid #dddddd92;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.01);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 10px;
+}
+.searchResultUserCard:hover {
+  background-color: #e4e4e4; /* Light gray background on hover */
+}
+
+.searchResultUserCardImage {
+  width: 100%; /* Cover entire container */
+  height: 100%; /* Cover entire container */
+  object-fit: cover; /* Cover area without distorting */
+}
+.user-result {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.user-result:last-child {
+  border-bottom: none;
+}
+
+.chatHeader {
+  border: 1px solid #dddddd92;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.01);
+  border-radius: 10px;
+  padding: 0.2rem;
+  display: flex;
+  align-items: center;
+}
+.chatBody {
+  flex: 1;
+}
+.chatInput {
+  border: 1px solid #dddddd92;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.01);
+  border-radius: 10px;
+  padding: 0.2rem;
+  display: flex;
+  align-items: center;
+}
+
+.chatInput .svg-container {
+  width: 1rem; /* Set width to 2rem */
+  height: 1rem; /* Set height to 2rem */
+  border-radius: 10px; /* Set border radius to 10px */
+  display: flex; /* Align SVG within the container */
+  justify-content: center; /* Center SVG horizontally */
+  align-items: center; /* Center SVG vertically */
+  overflow: hidden; /* Ensure SVG fits within the container */
+  border: 1px solid #ddddddcf;
+  padding: 4px;
+  background-color: #27b0f5;
+}
+.chatInput .emoji-container {
+  width: 1rem; /* Set width to 2rem */
+  height: 1rem; /* Set height to 2rem */
+  border-radius: 10px; /* Set border radius to 10px */
+  display: flex; /* Align SVG within the container */
+  justify-content: center; /* Center SVG horizontally */
+  align-items: center; /* Center SVG vertically */
+  overflow: hidden; /* Ensure SVG fits within the container */
+  border: 1px solid #ddddddcf;
+  padding: 4px;
+  background-color: #f2d200;
+}
+
+.chatInput .svg-container svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* messages 0*/
+.chatMessages {
+}
+.chatInnerContainer {
+  max-height: 60vh;
+  overflow: hidden;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  gap: 5px; /* Space between messages */
+  font-size: 1rem;
+  padding: 5px;
+}
+.chatInnerContainer .message {
+  padding: 5px;
+  padding-left: 10px;
+  border-radius: 10px;
+  position: relative;
+  max-width: 50%;
+  word-wrap: break-word; /* Ensure long words wrap within the message box */
+}
+.chatInnerContainer .other-message {
+  background-color: #fff;
+  align-self: flex-start;
+  border-radius: 10px 10px 0 10px;
+}
+.chatInnerContainer .my-message {
+  background-color: #8fdfff;
+  align-self: flex-end;
+  border-radius: 10px 10px 10px 0;
+}
+.chatInnerContainer .time {
+  display: block;
+  font-size: 10px;
+  color: #999;
+  margin-top: 2px;
+  text-align: right;
+}
+.my-message .time {
+  color: white;
+}
+
+.ticks {
+  margin-left: 5px;
+}
+
+.my-message .ticks {
+  color: #fffafa; /* Default color for ticks */
+}
+
+.my-message.read .ticks {
+  color: blue; /* Optional: change color if the message is read */
+}
+
