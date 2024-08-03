@@ -1,7 +1,7 @@
 {% load static %}
 <div class="chatMenu" data-username="{{  recipient }}">
   <img src="{% static 'images/x-solid.svg' %}" alt="x" class="chatMenuXsvg" id="actionButton" />
-  <div class="chatHeader">
+  <div class="chatHeader" style="justify-content: space-between;">
     <div style="display: flex; align-items: center">
       <div class="avatar-container">
         <img
@@ -14,11 +14,17 @@
         <h4>{{ recipient }}</h4>
       </div>
     </div>
+    <div>
+       <div style="height: 2rem; width: 2rem; margin-right: 10px; padding: 2px; background-color: red; border-radius: 10px; display: flex; align-items: center; justify-content: center; ">
+        <img src="/static/images/face-smile-regular.svg" alt="" width="90%" height="90%">
+       </div>
+    </div>
   </div>
   <div class="chatMessages" >
     <div class="chatInnerContainer" id="chatMessages-{{ recipient }}">
-      </div>
-  </div >
+       
+    </div>
+  </div>
 
   <div class="chatInput">
         <div style="width:100%; display: flex; align-items: center; justify-content: space-between;">
@@ -44,3 +50,5 @@
         </div>
        
 </div>
+
+<!-- get all messages from database -->

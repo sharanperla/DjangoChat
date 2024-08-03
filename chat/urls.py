@@ -10,4 +10,5 @@ urlpatterns = [
     path("online-users/", chat_views.online_users, name="online-users"),
     path("chat/private/<str:recipient_username>/", chat_views.privateChatPage, name="private-chat-page"),
     path('load-chat-menu/<str:recipient_username>/', chat_views.load_chat_menu, name='load_chat_menu'),
+    path('api/messages/<str:username>/', chat_views.get_messages, name='get_messages'),
 ]

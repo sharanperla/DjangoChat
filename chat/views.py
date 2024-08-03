@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from .models import Message
+from django.shortcuts import get_object_or_404
 
 def chatPage(request, *args, **kwargs):
     if not request.user.is_authenticated:
@@ -51,3 +53,24 @@ def search_users(request):
     return JsonResponse(results, safe=False)
 
 
+@login_required
+def get_messages(request, username):
+    current_user = request.user
+    recipient = get_object_or_404(User, username=username)
+
+    messages = Message.objects.filter(
+        Q(sender=current_user, recipient=recipient) |
+        Q(sender=recipient, recipient=current_user)
+    ).order_by('timestamp')
+
+    messages_data = [
+        {
+            'sender': message.sender.username,
+            'recipient': message.recipient.username,
+            'content': message.content,
+            'timestamp': message.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+        }
+        for message in messages
+    ]
+
+    return JsonResponse({'messages': messages_data})
