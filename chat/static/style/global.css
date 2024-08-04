@@ -440,3 +440,43 @@ input:hover {
   color: blue; /* Optional: change color if the message is read */
 }
 
+
+/* chatMenu dropdown */
+
+/* .chatMenu-dropdown-container .icon {
+  height: 1rem;
+  width: 1rem;
+  margin-right: 10px;
+  padding: 2px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.chatMenu-dropdown-container .dropdown {
+  display: none;
+  position: absolute;
+  top: 1.5rem; 
+  left: 0;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  z-index: 10;
+} */
+
+.chatMenu-dropdown-container .dropdown ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.chatMenu-dropdown-container .dropdown li {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.chatMenu-dropdown-container .dropdown li:hover {
+  background-color: #f0f0f0;
+}

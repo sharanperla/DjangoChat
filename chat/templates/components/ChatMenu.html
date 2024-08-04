@@ -1,7 +1,12 @@
 {% load static %}
 <div class="chatMenu" data-username="{{  recipient }}">
-  <img src="{% static 'images/x-solid.svg' %}" alt="x" class="chatMenuXsvg" id="actionButton" />
-  <div class="chatHeader" style="justify-content: space-between;">
+  <img
+    src="{% static 'images/x-solid.svg' %}"
+    alt="x"
+    class="chatMenuXsvg"
+    id="actionButton"
+  />
+  <div class="chatHeader" style="justify-content: space-between">
     <div style="display: flex; align-items: center">
       <div class="avatar-container">
         <img
@@ -14,41 +19,117 @@
         <h4>{{ recipient }}</h4>
       </div>
     </div>
-    <div>
-       <div style="height: 2rem; width: 2rem; margin-right: 10px; padding: 2px; background-color: red; border-radius: 10px; display: flex; align-items: center; justify-content: center; ">
-        <img src="/static/images/face-smile-regular.svg" alt="" width="90%" height="90%">
-       </div>
+    <div
+      class="chatMenu-dropdown-container"
+      style="display: flex; align-items: center; position: relative"
+    >
+      <div
+        class="icon"
+        onclick="toggleDropdown()"
+        style="
+          height: 1rem;
+          width: 1rem;
+          margin-right: 10px;
+          padding: 2px;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+        "
+      >
+        <img src="/static/images/3-dots.svg" alt="" width="90%" height="90%" />
+      </div>
+      <div
+        class="dropdown"
+        id="dropdownMenu"
+        style="
+          display: none;
+          position: absolute;
+          top: 1.5rem;
+          left: 0;
+          background-color: white;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+          border-radius: 5px;
+          z-index: 10;
+        "
+      >
+        <ul style="list-style: none; margin: 0; padding: 0">
+          <li onclick="clearChat()" style="padding: 8px 12px; cursor: pointer">
+            Clear Chat
+          </li>
+          <!-- Add more options here if needed -->
+        </ul>
+      </div>
     </div>
   </div>
-  <div class="chatMessages" >
-    <div class="chatInnerContainer" id="chatMessages-{{ recipient }}">
-       
-    </div>
+  <div class="chatMessages">
+    <div class="chatInnerContainer" id="chatMessages-{{ recipient }}"></div>
   </div>
 
   <div class="chatInput">
-        <div style="width:100%; display: flex; align-items: center; justify-content: space-between;">
-          <div style="flex:1">
-            <input type="text" id="chatInput-{{ recipient }}" style="width: 90%; height: 100%; border: none;" placeholder="type here.." >
+    <div
+      style="
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      "
+    >
+      <div style="flex: 1">
+        <input
+          type="text"
+          id="chatInput-{{ recipient }}"
+          style="width: 90%; height: 100%; border: none"
+          placeholder="type here.."
+        />
+      </div>
+      <div>
+        <div style="display: flex">
+          <div class="emoji-container">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+              <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+              <path
+                d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm177.6 62.1C192.8 334.5 218.8 352 256 352s63.2-17.5 78.4-33.9c9-9.7 24.2-10.4 33.9-1.4s10.4 24.2 1.4 33.9c-22 23.8-60 49.4-113.6 49.4s-91.7-25.5-113.6-49.4c-9-9.7-8.4-24.9 1.4-33.9s24.9-8.4 33.9 1.4zM144.4 208a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm192-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"
+              />
+            </svg>
           </div>
-          <div >
-            <div style="display: flex;">
-              <div class="emoji-container">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                  <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-                  <path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm177.6 62.1C192.8 334.5 218.8 352 256 352s63.2-17.5 78.4-33.9c9-9.7 24.2-10.4 33.9-1.4s10.4 24.2 1.4 33.9c-22 23.8-60 49.4-113.6 49.4s-91.7-25.5-113.6-49.4c-9-9.7-8.4-24.9 1.4-33.9s24.9-8.4 33.9 1.4zM144.4 208a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm192-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>
-            </div>
-            <div class="svg-container" id="id_message_send_button-{{ recipient }}">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                    <!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc. -->
-                    <path d="M307 34.8c-11.5 5.1-19 16.6-19 29.2l0 64-112 0C78.8 128 0 206.8 0 304C0 417.3 81.5 467.9 100.2 478.1c2.5 1.4 5.3 1.9 8.1 1.9c10.9 0 19.7-8.9 19.7-19.7c0-7.5-4.3-14.4-9.8-19.5C108.8 431.9 96 414.4 96 384c0-53 43-96 96-96l96 0 0 64c0 12.6 7.4 24.1 19 29.2s25 3 34.4-5.4l160-144c6.7-6.1 10.6-14.7 10.6-23.8s-3.8-17.7-10.6-23.8l-160-144c-9.4-8.5-22.9-10.6-34.4-5.4z"/>
-                </svg>
-              </div>
-            </div>
-            
+          <div
+            class="svg-container"
+            id="id_message_send_button-{{ recipient }}"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+              <!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc. -->
+              <path
+                d="M307 34.8c-11.5 5.1-19 16.6-19 29.2l0 64-112 0C78.8 128 0 206.8 0 304C0 417.3 81.5 467.9 100.2 478.1c2.5 1.4 5.3 1.9 8.1 1.9c10.9 0 19.7-8.9 19.7-19.7c0-7.5-4.3-14.4-9.8-19.5C108.8 431.9 96 414.4 96 384c0-53 43-96 96-96l96 0 0 64c0 12.6 7.4 24.1 19 29.2s25 3 34.4-5.4l160-144c6.7-6.1 10.6-14.7 10.6-23.8s-3.8-17.7-10.6-23.8l-160-144c-9.4-8.5-22.9-10.6-34.4-5.4z"
+              />
+            </svg>
           </div>
         </div>
-       
+      </div>
+    </div>
+  </div>
 </div>
+<!-- toggle dropdown menu  -->
+<script>
+function toggleDropdown() {
+  const dropdown = document.getElementById('dropdownMenu');
+  dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+}
 
-<!-- get all messages from database -->
+function clearChat() {
+  // Implement your chat clearing logic here
+  alert('Chat cleared!');
+  // Hide the dropdown after action
+  toggleDropdown();
+}
+
+// Close dropdown if clicked outside
+document.addEventListener('click', function (event) {
+  const isClickInside = document.querySelector('.chatMenu-dropdown-container').contains(event.target);
+  if (!isClickInside) {
+    document.getElementById('dropdownMenu').style.display = 'none';
+  }
+});
+
+</script>
