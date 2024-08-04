@@ -1,25 +1,27 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-  <head>
-    <link rel="stylesheet" href="{% static 'style/global.css' %}">
-  </head>
+
+<head>
+  <link rel="stylesheet" href="{% static 'style/global.css' %}">
+</head>
+
 <body>
   <div class="container">
     {% block header %}
     {% include '../components/header.html' %}
     {% endblock %}
     {% block body %}
-      {% include '../components/HomePage.html' %}
+    {% include '../components/HomePage.html' %}
     {% endblock %}
-  <!-- <div class="chat__item__container" id="id_chat_item_container" style="font-size: 20px">
+    <!-- <div class="chat__item__container" id="id_chat_item_container" style="font-size: 20px">
     <br />
     <input type="text" id="id_message_send_input" />
     <button type="submit" id="id_message_send_button">Send Message</button>
     <br />
     <br />
   </div> -->
-</div> 
+  </div>
   <script>
     const chatSocket = new WebSocket("ws://" + window.location.host + "/ws/chat/");
 
@@ -31,7 +33,7 @@
       console.log("Something unexpected happened!");
     };
 
-    
+
 
     // document.querySelector("#id_message_send_button").onclick = function (e) {
     //   console("inside click")
@@ -52,232 +54,225 @@
     // }
 
     function initiatePrivateChat(username) {
-  const container = document.getElementById('chatMenuContainer');
+      const container = document.getElementById('chatMenuContainer');
 
-  // Count the number of current child divs in the container
-  const currentDivCount = container.querySelectorAll('.chatMenu').length;
-
-  if (currentDivCount >= 3) {
-    // Limit reached, do not add more divs
-    console.warn('Maximum number of chat menu divs reached.');
-    return;
-  }
-
-  // Fetch the chat menu template and insert it into the container
-  fetch(`/load-chat-menu/${username}/`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+      // Check if the chat menu already exists for this user
+      if (container.querySelector(`.chatMenu[data-username="${username}"]`)) {
+        console.log(`Chat menu for ${username} already exists.`);
+        return; // Exit the function if the chat menu already exists
       }
-      return response.text();
-    })
-    .then(html => {
-      // Create a temporary div to safely parse the HTML
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = html;
 
-      // Ensure the chat menu has a unique data attribute
-      const chatMenu = tempDiv.querySelector('.chatMenu');
-      chatMenu.dataset.username = username;
+      // Fetch the chat menu template and insert it into the container
+      fetch(`/load-chat-menu/${username}/`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.text();
+        })
+        .then(html => {
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = html;
 
-      // Append the chat menu to the container
-      container.appendChild(chatMenu);
+          const chatMenu = tempDiv.querySelector('.chatMenu');
+          chatMenu.dataset.username = username;
 
-      // Initialize WebSocket and event listeners
-      setupChat(username);
+          container.appendChild(chatMenu);
 
-      // Attach event listeners to the close button
-      attachRemoveListeners();
+          setupChat(username);
 
-      loadMessages(username);
-    })
-    .catch(error => {
-      console.error('There was a problem with the fetch operation:', error);
-    });
-}
-  function loadMessages(username) {
-  const chatInnerContainer = document.querySelector(`#chatMessages-${username}`);
+          attachRemoveListeners();
 
-  fetch(`/api/messages/${username}/`)
-    .then(response => response.json())
-    .then(data => {
-      const messages = data.messages;
-      chatInnerContainer.innerHTML = ''; // Clear existing messages
-       
-      messages.length>0&&messages.forEach(message => {
-  // Create a div for the message
-  const messageDiv = document.createElement('div');
-  messageDiv.className = 'message';
-  messageDiv.classList.add(message.sender === username ? 'other-message' : 'my-message');
-
-  // Create a paragraph for the message content
-  const messageContent = document.createElement('p');
-  
-  messageContent.textContent = message.content; // Set the text content of the paragraph
-
-  // Create a span for the message timestamp and status
-  const messageInfo = document.createElement('span');
-  messageInfo.classList.add('time');
-
-  // Determine the tick mark based on message status
-  let ticks = '✔'; // Single tick by default
-  if (message.status === 'delivered') {
-    ticks = '✔✔'; // Double tick for delivered
-  } else if (message.status === 'read') {
-    ticks = '✔✔'; // Double tick for read, you can add color styling
-  }
-  // Format the timestamp to hh:MM AM/PM
-  const timestampDate = new Date(message.timestamp); // Convert to Date object
-  let hours = timestampDate.getHours(); // Get hours
-  const minutes = String(timestampDate.getMinutes()).padStart(2, '0'); // Get minutes with leading zero
-
-  // Determine AM or PM
-  const period = hours >= 12 ? 'PM' : 'AM';
-
-  // Convert to 12-hour format
-  hours = hours % 12;
-  hours = hours ? hours : 12; // Handle midnight (0 hours) as 12
-
-  // Format the time as hh:MM AM/PM
-  const formattedTime = `${String(hours).padStart(2, '0')}:${minutes} ${period}`;
-
-
-  // Set the inner HTML for the message info
-  messageInfo.innerHTML = `${formattedTime} <span class="ticks">${ticks}</span>`;
-
-  // Append the content and info to the messageDiv
-  messageDiv.appendChild(messageContent);
-  messageDiv.appendChild(messageInfo);
-
-  // Append the messageDiv to the chatInnerContainer
-  chatInnerContainer.appendChild(messageDiv);
-
-   // Scroll to the bottom of the chat to show the new message
-   chatInnerContainer.scrollTop = chatInnerContainer.scrollHeight;
-});
-
-    })
-    .catch(error => console.error('Error fetching messages:', error));
-}
-
-
-  
-
-function setupChat(username) {
-  const privateChatURL = `/ws/chat/private/${getChatRoomName("{{request.user.username}}", username)}/`;
-
-  // Initialize a new WebSocket for each chat
-  const privateChatSocket = new WebSocket(privateChatURL);
-
-  privateChatSocket.onopen = function (e) {
-    console.log("Private chat connection established with " + username + "!");
-  };
-
-  privateChatSocket.onclose = function (e) {
-    console.log("Private chat connection closed with " + username + "!");
-  };
-
-  // document.querySelector(`#chatInput-${username}`).focus();
-    document.querySelector(`#chatInput-${username}`).onkeyup = function (e) {
-      if (e.keyCode == 13) {
-        document.querySelector(`#id_message_send_button-${username}`).click();
-      }
-    };
-
-  const chatDiv = document.querySelector(`.chatMenu[data-username="${username}"]`);
-  const messageInput = chatDiv.querySelector(`#chatInput-${username}`);
-  const sendMessageButton = chatDiv.querySelector(`#id_message_send_button-${username}`);
-
-  // Handle sending messages
-  sendMessageButton.onclick = function (e) {
-    const message = messageInput.value;
-    if (message.trim()) {
-      privateChatSocket.send(JSON.stringify({
-        message: message,
-        username: "{{ request.user.username }}",
-        recipient: username
-      }));
-      messageInput.value = ''; // Clear input after sending
-    }
-  };
-
-  // Handle receiving messages
-  privateChatSocket.onmessage = function (e) {
-    const data = JSON.parse(e.data);
-    // Create a new message container
-    const messageDiv = document.createElement('div');
-    messageDiv.classList.add('message');
-
-    // Determine if the message is from the current user
-    if (data.username === "{{ request.user.username }}") {
-        messageDiv.classList.add('my-message');
-    } else {
-        messageDiv.classList.add('other-message');
+          loadMessages(username);
+        })
+        .catch(error => {
+          console.error('There was a problem with the fetch operation:', error);
+        });
     }
 
-    // Create a paragraph element for the message text
-    const messageContent = document.createElement('p');
-    messageContent.textContent = data.message;
+    function loadMessages(username) {
+      const chatInnerContainer = document.querySelector(`#chatMessages-${username}`);
 
-    // Create a span element for the time and ticks
-    const messageInfo = document.createElement('span');
-    messageInfo.classList.add('time');
+      fetch(`/api/messages/${username}/`)
+        .then(response => response.json())
+        .then(data => {
+          const messages = data.messages;
+          chatInnerContainer.innerHTML = ''; // Clear existing messages
 
-    // Get the current time formatted as HH:MM AM/PM
-    const now = new Date();
-    const hours = now.getHours();
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    const formattedHours = (hours % 12) || 12; // Convert to 12-hour format
-    const currentTime = `${formattedHours}:${minutes} ${ampm}`;
-     
-    // Determine the tick mark based on message status
-    let ticks = '✔'; // Single tick by default
-    console.log(data,'data from table')
-    if (data.status === 'delivered') {
-        ticks = '✔✔'; // Double tick for delivered
-    } else if (data.status === 'read') {
-        ticks = '✔✔'; // Double tick for read, you can add color styling
+          messages.length > 0 && messages.forEach(message => {
+            // Create a div for the message
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            messageDiv.classList.add(message.sender === username ? 'other-message' : 'my-message');
+
+            // Create a paragraph for the message content
+            const messageContent = document.createElement('p');
+
+            messageContent.textContent = message.content; // Set the text content of the paragraph
+
+            // Create a span for the message timestamp and status
+            const messageInfo = document.createElement('span');
+            messageInfo.classList.add('time');
+
+            // Determine the tick mark based on message status
+            let ticks = '✔'; // Single tick by default
+            if (message.status === 'delivered') {
+              ticks = '✔✔'; // Double tick for delivered
+            } else if (message.status === 'read') {
+              ticks = '✔✔'; // Double tick for read, you can add color styling
+            }
+            // Format the timestamp to hh:MM AM/PM
+            const timestampDate = new Date(message.timestamp); // Convert to Date object
+            let hours = timestampDate.getHours(); // Get hours
+            const minutes = String(timestampDate.getMinutes()).padStart(2, '0'); // Get minutes with leading zero
+
+            // Determine AM or PM
+            const period = hours >= 12 ? 'PM' : 'AM';
+
+            // Convert to 12-hour format
+            hours = hours % 12;
+            hours = hours ? hours : 12; // Handle midnight (0 hours) as 12
+
+            // Format the time as hh:MM AM/PM
+            const formattedTime = `${String(hours).padStart(2, '0')}:${minutes} ${period}`;
+
+
+            // Set the inner HTML for the message info
+            messageInfo.innerHTML = `${formattedTime} <span class="ticks">${ticks}</span>`;
+
+            // Append the content and info to the messageDiv
+            messageDiv.appendChild(messageContent);
+            messageDiv.appendChild(messageInfo);
+
+            // Append the messageDiv to the chatInnerContainer
+            chatInnerContainer.appendChild(messageDiv);
+
+            // Scroll to the bottom of the chat to show the new message
+            chatInnerContainer.scrollTop = chatInnerContainer.scrollHeight;
+          });
+
+        })
+        .catch(error => console.error('Error fetching messages:', error));
     }
 
-    // Set the time and ticks text
-    messageInfo.innerHTML = `${currentTime} <span class="ticks">${ticks}</span>`;
 
-    // Append the message text and time to the message container
-    messageDiv.appendChild(messageContent);
-    messageDiv.appendChild(messageInfo);
 
-    // Append the message container to the chat messages area
-    const chatMessages = document.querySelector(`#chatMessages-${username}`);
-    chatMessages.appendChild(messageDiv);
 
-    // Scroll to the bottom of the chat to show the new message
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-};
+    function setupChat(username) {
+      const privateChatURL = `/ws/chat/private/${getChatRoomName("{{request.user.username}}", username)}/`;
 
-}
+      // Initialize a new WebSocket for each chat
+      const privateChatSocket = new WebSocket(privateChatURL);
 
-function attachRemoveListeners() {
-  const container = document.getElementById('chatMenuContainer');
-  const buttons = container.querySelectorAll('.chatMenuXsvg');
-  buttons.forEach(button => {
-    button.addEventListener('click', function (event) {
-      const innerDiv = event.target.closest('.chatMenu');
-      if (innerDiv) {
-        innerDiv.remove();
-      }
-    });
-  });
-}
+      privateChatSocket.onopen = function (e) {
+        console.log("Private chat connection established with " + username + "!");
+      };
 
-function getChatRoomName(user1, user2) {
-  return [user1, user2].sort().join("_");
-}
+      privateChatSocket.onclose = function (e) {
+        console.log("Private chat connection closed with " + username + "!");
+      };
 
-// Example of setInterval usage, assuming fetchOnlineUsers is defined
-// setInterval(fetchOnlineUsers, 5000);
- // Fetch online users every 5 seconds
+      // document.querySelector(`#chatInput-${username}`).focus();
+      document.querySelector(`#chatInput-${username}`).onkeyup = function (e) {
+        if (e.keyCode == 13) {
+          document.querySelector(`#id_message_send_button-${username}`).click();
+        }
+      };
+
+      const chatDiv = document.querySelector(`.chatMenu[data-username="${username}"]`);
+      const messageInput = chatDiv.querySelector(`#chatInput-${username}`);
+      const sendMessageButton = chatDiv.querySelector(`#id_message_send_button-${username}`);
+
+      // Handle sending messages
+      sendMessageButton.onclick = function (e) {
+        const message = messageInput.value;
+        if (message.trim()) {
+          privateChatSocket.send(JSON.stringify({
+            message: message,
+            username: "{{ request.user.username }}",
+            recipient: username
+          }));
+          messageInput.value = ''; // Clear input after sending
+        }
+      };
+
+      // Handle receiving messages
+      privateChatSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        // Create a new message container
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message');
+
+        // Determine if the message is from the current user
+        if (data.username === "{{ request.user.username }}") {
+          messageDiv.classList.add('my-message');
+        } else {
+          messageDiv.classList.add('other-message');
+        }
+
+        // Create a paragraph element for the message text
+        const messageContent = document.createElement('p');
+        messageContent.textContent = data.message;
+
+        // Create a span element for the time and ticks
+        const messageInfo = document.createElement('span');
+        messageInfo.classList.add('time');
+
+        // Get the current time formatted as HH:MM AM/PM
+        const now = new Date();
+        const hours = now.getHours();
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        const formattedHours = (hours % 12) || 12; // Convert to 12-hour format
+        const currentTime = `${formattedHours}:${minutes} ${ampm}`;
+
+        // Determine the tick mark based on message status
+        let ticks = '✔'; // Single tick by default
+        console.log(data, 'data from table')
+        if (data.status === 'delivered') {
+          ticks = '✔✔'; // Double tick for delivered
+        } else if (data.status === 'read') {
+          ticks = '✔✔'; // Double tick for read, you can add color styling
+        }
+
+        // Set the time and ticks text
+        messageInfo.innerHTML = `${currentTime} <span class="ticks">${ticks}</span>`;
+
+        // Append the message text and time to the message container
+        messageDiv.appendChild(messageContent);
+        messageDiv.appendChild(messageInfo);
+
+        // Append the message container to the chat messages area
+        const chatMessages = document.querySelector(`#chatMessages-${username}`);
+        chatMessages.appendChild(messageDiv);
+
+        // Scroll to the bottom of the chat to show the new message
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      };
+
+    }
+
+    function attachRemoveListeners() {
+      const container = document.getElementById('chatMenuContainer');
+      const buttons = container.querySelectorAll('.chatMenuXsvg');
+      buttons.forEach(button => {
+        button.addEventListener('click', function (event) {
+          const innerDiv = event.target.closest('.chatMenu');
+          if (innerDiv) {
+            innerDiv.remove();
+          }
+        });
+      });
+    }
+
+    function getChatRoomName(user1, user2) {
+      return [user1, user2].sort().join("_");
+    }
+
+    // Example of setInterval usage, assuming fetchOnlineUsers is defined
+    setInterval(fetchOnlineUsers, 5000); // Fetch online users every 5 seconds
 
   </script>
 </body>
+
 </html>
