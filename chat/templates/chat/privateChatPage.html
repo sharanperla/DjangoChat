@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <body>
   <center>
     <h1>Private Chat with {{ recipient }}</h1>
@@ -39,9 +40,9 @@
 
       document.querySelector("#id_message_send_button").onclick = function (e) {
         var messageInput = document.querySelector("#id_message_send_input").value;
-        privateChatSocket.send(JSON.stringify({ 
-          message: messageInput, 
-          username: "{{ request.user.username }}", 
+        privateChatSocket.send(JSON.stringify({
+          message: messageInput,
+          username: "{{ request.user.username }}",
           recipient: "{{ recipient }}" // Pass the recipient username here
         }));
       };
@@ -56,4 +57,5 @@
     }
   </script>
 </body>
+
 </html>
