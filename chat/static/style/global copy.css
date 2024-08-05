@@ -225,17 +225,26 @@ body {
 /* Avatar styles */
 .avatar-container {
   width: 50px;
+  /* Avatar size */
   height: 50px;
+  /* Avatar size */
   overflow: hidden;
+  /* Prevent overflow */
   border-radius: 50%;
+  /* Circular shape */
   flex-shrink: 0;
+  /* Prevent shrinking */
   margin-right: 10px;
+  /* Space between avatar and text */
 }
 
 .homePageUsercardImage {
   width: 100%;
+  /* Cover entire container */
   height: 100%;
+  /* Cover entire container */
   object-fit: cover;
+  /* Cover area without distorting */
 }
 
 /* Text content */
@@ -246,12 +255,19 @@ body {
 
 .popMenuUserName {
   margin: 0;
+  /* Remove default margin */
   font-size: 16px;
+  /* Font size for names */
   font-weight: 600;
+  /* Bold text */
   color: #333;
+  /* Dark text color */
   white-space: nowrap;
+  /* Prevent wrapping */
   overflow: hidden;
+  /* Prevent overflow */
   text-overflow: ellipsis;
+  /* Add ellipsis for overflow */
 }
 
 .highlightedUserName {
@@ -261,11 +277,17 @@ body {
 
 .popMenuMessagePreview {
   margin: 0;
+  /* Remove default margin */
   font-size: 14px;
+  /* Font size for previews */
   color: #666;
+  /* Gray text color */
   white-space: nowrap;
+  /* Prevent wrapping */
   overflow: hidden;
+  /* Prevent overflow */
   text-overflow: ellipsis;
+  /* Add ellipsis for overflow */
 }
 
 /* searchBar */
@@ -332,12 +354,16 @@ input:hover {
 
 .searchResultUserCard:hover {
   background-color: #e4e4e4;
+  /* Light gray background on hover */
 }
 
 .searchResultUserCardImage {
   width: 100%;
+  /* Cover entire container */
   height: 100%;
+  /* Cover entire container */
   object-fit: cover;
+  /* Cover area without distorting */
 }
 
 .user-result {
@@ -363,49 +389,61 @@ input:hover {
 }
 
 .chatInput {
+  border: 1px solid #dddddd92;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.01);
+  border-radius: 10px;
+  padding: 0.2rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 8px;
-  background: #f9f9f9;
-  border-top: 1px solid #ddd;
 }
 
-.chatInput input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-.input-icons {
+.chatInput .svg-container {
+  width: 1rem;
+  /* Set width to 2rem */
+  height: 1rem;
+  /* Set height to 2rem */
+  border-radius: 10px;
+  /* Set border radius to 10px */
   display: flex;
-  align-items: center;
-  margin-left: 8px;
-}
-
-.emoji-container,
-.svg-container {
-  cursor: pointer;
-  margin-left: 8px;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
+  /* Align SVG within the container */
   justify-content: center;
+  /* Center SVG horizontally */
+  align-items: center;
+  /* Center SVG vertically */
+  overflow: hidden;
+  /* Ensure SVG fits within the container */
+  border: 1px solid #ddddddcf;
+  padding: 4px;
+  background-color: #27b0f5;
 }
 
-.emoji-container {
+.chatInput .emoji-container {
+  width: 1rem;
+  /* Set width to 2rem */
+  height: 1rem;
+  /* Set height to 2rem */
+  border-radius: 10px;
+  /* Set border radius to 10px */
   display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
+  /* Align SVG within the container */
+  justify-content: center;
+  /* Center SVG horizontally */
+  align-items: center;
+  /* Center SVG vertically */
+  overflow: hidden;
+  /* Ensure SVG fits within the container */
+  border: 1px solid #ddddddcf;
+  padding: 4px;
+  background-color: #f2d200;
 }
 
 .chatInput .svg-container svg {
   width: 100%;
   height: 100%;
 }
+
+/* messages 0*/
+.chatMessages {}
 
 .chatInnerContainer {
   max-height: 60vh;
@@ -414,6 +452,7 @@ input:hover {
   display: flex;
   flex-direction: column;
   gap: 5px;
+  /* Space between messages */
   font-size: 1rem;
   padding: 5px;
 }
@@ -425,6 +464,7 @@ input:hover {
   position: relative;
   max-width: 50%;
   word-wrap: break-word;
+  /* Ensure long words wrap within the message box */
 }
 
 .chatInnerContainer .other-message {
@@ -457,50 +497,63 @@ input:hover {
 
 .my-message .ticks {
   color: #fffafa;
+  /* Default color for ticks */
 }
 
 .my-message.read .ticks {
   color: blue;
+  /* Optional: change color if the message is read */
 }
 
-.emoji-picker-container {
+/* Emoji picker container styles */
+#emoji-picker-container {
   display: none;
-  position: absolute;
-  bottom: 60px;
-  right: 10px;
-  width: 250px;
-  max-height: 300px;
-  overflow-y: auto;
-  background: #ffffff;
+  width: 200px;
+  height: 200px;
+  overflow: auto;
   border: 1px solid #ddd;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  padding: 10px;
-  z-index: 1000;
+  background-color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .emoji {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  padding: 5px;
-  font-size: 1.5rem;
+  font-size: 24px;
   cursor: pointer;
-  transition: background 0.3s;
-  border-radius: 50%;
+  display: inline-block;
+  padding: 5px;
+  margin: 5px;
 }
 
 .emoji:hover {
   background-color: #f0f0f0;
 }
 
-.emoji-container {
+
+/* chatMenu dropdown */
+
+/* .chatMenu-dropdown-container .icon {
+  height: 1rem;
+  width: 1rem;
+  margin-right: 10px;
+  padding: 2px;
+  border-radius: 10px;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
+
+.chatMenu-dropdown-container .dropdown {
+  display: none;
+  position: absolute;
+  top: 1.5rem; 
+  left: 0;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  z-index: 10;
+} */
 
 .chatMenu-dropdown-container .dropdown ul {
   list-style: none;
@@ -515,4 +568,57 @@ input:hover {
 
 .chatMenu-dropdown-container .dropdown li:hover {
   background-color: #f0f0f0;
+}
+
+
+/* audio tag */
+.custom-audio {
+  width: 100%; /* Make audio player full width */
+  height: 40px; /* Set a custom height */
+  background-color: #f0f0f0; /* Set a background color */
+  border-radius: 5px; /* Round the corners */
+  outline: none; /* Remove default outline */
+  border: 1px solid #ccc; /* Add a border */
+}
+
+/* Custom styles for controls */
+.custom-audio::-webkit-media-controls-panel {
+  background-color: #f0f0f0; /* Panel background color */
+  border-radius: 5px; /* Panel rounded corners */
+}
+
+.custom-audio::-webkit-media-controls-play-button,
+.custom-audio::-webkit-media-controls-current-time-display,
+.custom-audio::-webkit-media-controls-time-remaining-display,
+.custom-audio::-webkit-media-controls-volume-slider,
+.custom-audio::-webkit-media-controls-seek-back-button,
+.custom-audio::-webkit-media-controls-seek-forward-button {
+  filter: hue-rotate(120deg); /* Change icon colors */
+}
+
+.custom-audio::-webkit-media-controls-timeline {
+  background-color: #ccc; /* Change timeline background */
+}
+
+.custom-audio::-webkit-media-controls-mute-button,
+.custom-audio::-webkit-media-controls-fullscreen-button {
+  filter: hue-rotate(120deg); /* Change icon colors */
+}
+
+/* Styles for Firefox */
+.custom-audio::-moz-media-controls {
+  background-color: #f0f0f0; /* Panel background color */
+}
+
+.custom-audio::-moz-media-controls-play-button,
+.custom-audio::-moz-media-controls-mute-button {
+  filter: hue-rotate(120deg); /* Change icon colors */
+}
+
+.custom-audio::-moz-range-track {
+  background-color: #ccc; /* Change timeline background */
+}
+
+.custom-audio::-moz-range-thumb {
+  background-color: #333; /* Change thumb color */
 }

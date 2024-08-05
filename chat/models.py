@@ -3,9 +3,10 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Message(models.Model):
-    sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
-    recipient = models.ForeignKey(User, related_name='received_messages', on_delete=models.CASCADE)
-    content = models.TextField()
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
+    content = models.TextField(blank=True, null=True)  # For text messages
+    audio_url = models.URLField(blank=True, null=True)  # For audio messages
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

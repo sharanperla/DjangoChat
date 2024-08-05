@@ -99,21 +99,26 @@
 </script>
 
 <script>
-  function toggleEmoji() {
-    const emoji_picker = document.getElementById('emoji-picker-container');
-    emoji_picker.style.display = emoji_picker.style.display === 'block' ? 'none' : 'block';
-  }
-  // Function to select an emoji and add it to the chat input field
-  function selectEmoji(emoji, recipient) {
-    const chatInput = document.getElementById(recipient);
-    if (chatInput) {
-      chatInput.value += emoji;  // Append selected emoji to the chat input
-    } else {
-      console.error('Chat input field not found');
+  function toggleEmoji(recipient) {
+    const emojiPickerId = 'emoji-picker-container-' + recipient;
+    const emojiPicker = document.getElementById(emojiPickerId);
+    if (emojiPicker) {
+      emojiPicker.style.display = emojiPicker.style.display === 'block' ? 'none' : 'block';
     }
-    toggleEmoji();  // Hide the emoji picker after selection
   }
 
+  function selectEmoji(emoji, recipient) {
+    const chatInputId = 'chatInput-' + recipient;
+    const chatInput = document.getElementById(chatInputId);
+    if (chatInput) {
+      chatInput.value += emoji;
+    } else {
+      console.error('Chat input field not found for recipient:', recipient);
+    }
+
+    // Hide the emoji picker after selection
+    toggleEmoji(recipient);
+  }
 
 </script>
 <script>
@@ -136,4 +141,117 @@
       document.getElementById('dropdownMenu').style.display = 'none';
     }
   });
+</script>
+ <!-- audio message -->
+<script>
+  // Start recording
+  let mediaRecorder;
+let audioChunks = [];
+
+function startRecording(recipient) {
+  const audiocont = document.getElementById(`recording-container-${recipient}`);
+  audiocont.style.display = 'block';
+
+  navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(stream => {
+      mediaRecorder = new MediaRecorder(stream);
+      
+      mediaRecorder.ondataavailable = event => {
+        audioChunks.push(event.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+        sendAudioMessage(audioBlob, recipient);
+      };
+
+      mediaRecorder.start();
+    })
+    .catch(error => console.error('Error accessing media devices.', error));
+}
+function stopRecording(recipient) {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop();
+    mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+        sendAudioMessage(audioBlob, recipient);
+      };
+    console.log('Recording stopped.');
+  } else {
+    console.error('No active recording to stop.');
+  }
+  
+  const audiocont = document.getElementById(`recording-container-${recipient}`);
+  audiocont.style.display = 'none';
+}
+
+// Add more detailed logging
+function sendAudioMessage(audioBlob, recipient) {
+  console.log('Sending audio message...');
+  const formData = new FormData();
+  formData.append('audio', audioBlob, 'audio.wav');
+
+  fetch('/upload-audio/', {
+    method: 'POST',
+    body: formData,
+    // headers: {
+    //   'X-CSRFToken': getCSRFToken()
+    // }
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.file_url) {
+        console.log('Sending audio URL over WebSocket:', data.file_url);
+        chatSocket.send(JSON.stringify({
+          audio_url: data.file_url,
+          username: "{{ request.user.username }}",
+          recipient: recipient
+        }));
+        console.log('sent')
+
+      } else {
+        console.error('Error: No file URL returned');
+      }
+    })
+    .catch(error => console.error('Error sending audio message:', error));
+}
+
+
+  // // Update sendAudioMessage function to accept chatSocket
+  // function sendAudioMessage(audioBlob, recipient, chatSocket) {
+  //   const formData = new FormData();
+  //   formData.append('audio', audioBlob, 'audio.wav');
+
+  //   fetch('/upload-audio/', { // Ensure this URL is correct
+  //     method: 'POST',
+  //     body: formData,
+  //     // headers: {
+  //     //   'X-CSRFToken': getCSRFToken() // Ensure you have a function to retrieve the CSRF token
+  //     // }
+  //   })
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       if (data.file_url) {
+  //         chatSocket.send(JSON.stringify({
+  //           audio_url: data.file_url,
+  //           username: "{{ request.user.username }}",
+  //           recipient: recipient
+  //         }));
+  //       } else {
+  //         console.error('Error: No file URL returned');
+  //       }
+  //     })
+  //     .catch(error => console.error('Error sending audio message:', error));
+  // }
+// Function to get CSRF Token
+// function getCSRFToken() {
+//     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
+//     if (csrfTokenElement) {
+//         return csrfTokenElement.getAttribute('content');
+//     } else {
+//         console.error('CSRF token element not found');
+//         return null;
+//     }
+// }
+
 </script>

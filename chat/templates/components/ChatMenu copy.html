@@ -73,25 +73,25 @@
   </div>
 
   <div class="chatInput">
-    <div style="width: 100%; display: flex; align-items: center">
+    <div
+      style="
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      "
+    >
       <div style="flex: 1">
         <input
           type="text"
           id="chatInput-{{ recipient }}"
-          style="
-            width: 100%;
-            height: 100%;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 8px;
-            box-sizing: border-box;
-            font-size: 1rem;
-          "
+          style="width: 90%; height: 100%; border: none"
           placeholder="type here.."
         />
       </div>
-        <div class="input-icons">
-          <div class="emoji-container" onclick="toggleEmoji('{{ recipient }}')">
+      <div>
+        <div style="display: flex">
+          <div class="emoji-container" onclick="toggleEmoji()">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
               <path
                 d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm177.6 62.1C192.8 334.5 218.8 352 256 352s63.2-17.5 78.4-33.9c9-9.7 24.2-10.4 33.9-1.4s10.4 24.2 1.4 33.9c-22 23.8-60 49.4-113.6 49.4s-91.7-25.5-113.6-49.4c-9-9.7-8.4-24.9 1.4-33.9s24.9-8.4 33.9 1.4zM144.4 208a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm192-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"
@@ -99,14 +99,43 @@
             </svg>
           </div>
           <!-- Inside the emoji-picker-container div -->
-          <div style="display: none;" id="emoji-picker-container-{{ recipient }}" class="emoji-picker-container">
-            <div class="emoji" onclick="selectEmoji('😊', '{{ recipient }}')">😊</div>
-            <div class="emoji" onclick="selectEmoji('😂', '{{ recipient }}')">😂</div>
-            <div class="emoji" onclick="selectEmoji('😍', '{{ recipient }}')">😍</div>
-            <div class="emoji" onclick="selectEmoji('🤔', '{{ recipient }}')">🤔</div>
-            <div class="emoji" onclick="selectEmoji('😎', '{{ recipient }}')">😎</div>
+          <div
+            id="emoji-picker-container"
+            style="display: none; width: 10rem; height: 10rem; overflow: auto"
+          >
+            <div
+              class="emoji"
+              onclick="selectEmoji('😊', 'chatInput-{{ recipient }}')"
+            >
+              😊
+            </div>
+            <div
+              class="emoji"
+              onclick="selectEmoji('😂', 'chatInput-{{ recipient }}')"
+            >
+              😂
+            </div>
+            <div
+              class="emoji"
+              onclick="selectEmoji('😍', 'chatInput-{{ recipient }}')"
+            >
+              😍
+            </div>
+            <div
+              class="emoji"
+              onclick="selectEmoji('🤔', 'chatInput-{{ recipient }}')"
+            >
+              🤔
+            </div>
+            <div
+              class="emoji"
+              onclick="selectEmoji('😎', 'chatInput-{{ recipient }}')"
+            >
+              😎
+            </div>
             <!-- Add more emojis as needed -->
           </div>
+
           <div
             class="svg-container"
             id="id_message_send_button-{{ recipient }}"
@@ -118,40 +147,22 @@
             </svg>
           </div>
           <!-- Audio Message Button -->
-          <div
-            class="svg-container"
-            id="audio_message-{{ recipient }}"
-            onclick="startRecording('{{ recipient }}')"
-          >
-            <?xml version="1.0" encoding="utf-8"?>
-            <svg
-              fill="#000000"
-              width="800px"
-              height="800px"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M13,4V20a1,1,0,0,1-2,0V4a1,1,0,0,1,2,0ZM8,5A1,1,0,0,0,7,6V18a1,1,0,0,0,2,0V6A1,1,0,0,0,8,5ZM4,7A1,1,0,0,0,3,8v8a1,1,0,0,0,2,0V8A1,1,0,0,0,4,7ZM16,5a1,1,0,0,0-1,1V18a1,1,0,0,0,2,0V6A1,1,0,0,0,16,5Zm4,2a1,1,0,0,0-1,1v8a1,1,0,0,0,2,0V8A1,1,0,0,0,20,7Z"
-              />
-            </svg>
-          </div>
+<div class="svg-container" id="audio_message-{{ recipient }}" onclick="startRecording('{{ recipient }}')">
+  <?xml version="1.0" encoding="utf-8"?>
+  <svg fill="#000000" width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13,4V20a1,1,0,0,1-2,0V4a1,1,0,0,1,2,0ZM8,5A1,1,0,0,0,7,6V18a1,1,0,0,0,2,0V6A1,1,0,0,0,8,5ZM4,7A1,1,0,0,0,3,8v8a1,1,0,0,0,2,0V8A1,1,0,0,0,4,7ZM16,5a1,1,0,0,0-1,1V18a1,1,0,0,0,2,0V6A1,1,0,0,0,16,5Zm4,2a1,1,0,0,0-1,1v8a1,1,0,0,0,2,0V8A1,1,0,0,0,20,7Z"/></svg>
+</div>
 
-          <!-- Recording Indicator and Controls -->
-          <div id="recording-container-{{ recipient }}" style="display: none">
-            <div id="recording-indicator">
-              <span>Recording...</span>
-            </div>
-            <div id="audio-controls">
-              <button
-                id="stop-recording-btn"
-                onclick="stopRecording('{{ recipient }}')"
-              >
-                Stop Recording
-              </button>
-            </div>
-          </div>
-        </div>
+<!-- Recording Indicator and Controls -->
+<div id="recording-container-{{ recipient }}" style="display: none;">
+  <div id="recording-indicator">
+    <span>Recording...</span>
+  </div>
+  <div id="audio-controls">
+    <button id="stop-recording-btn" onclick="stopRecording('{{ recipient }}')">Stop Recording</button>
+  </div>
+</div>
+
+      </div>
     </div>
   </div>
 </div>

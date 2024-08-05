@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Call</title>
+    <link rel="stylesheet" href="{% static 'style/audio_call.css' %}">
+</head>
+<body>
+    <div id="callContainer">
+        <h1>Audio Call with <span id="callerName"></span></h1>
+        <div id="localAudioContainer">
+            <audio id="localAudio" autoplay muted></audio>
+        </div>
+        <div id="remoteAudioContainer">
+            <audio id="remoteAudio" autoplay></audio>
+        </div>
+        <button id="endCallButton">End Call</button>
+    </div>
+    <button id="startCallButton">Start Audio Call</button>
+    <script src="{% static 'scripts/audio_call.js' %}"></script>
+    <script>
+        document.getElementById('startCallButton').addEventListener('click', function() {
+            startCall();
+        });
+        
+        function startCall() {
+            // Here you send a message to the server indicating the call initiation
+            // This can be done using WebSockets or a traditional HTTP request
+            const callData = {
+                action: 'start',
+                caller: 'darshan',
+                recipient: 'sharan'
+            };
+            // Example using WebSocket
+            websocket.send(JSON.stringify(callData));
+        }
+        </script>
+        <script>
+            const websocket = new WebSocket('ws://yourserverurl/');
+            
+            websocket.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                if (data.action === 'call_started') {
+                    console.log(`${data.caller} started a call with ${data.recipient}`);
+                    // Update UI to show call initiation
+                }
+            };
+            </script>
+</body>
+</html>

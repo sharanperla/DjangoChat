@@ -3,6 +3,8 @@
 <html>
 
 <head>
+  <meta name="csrf-token" content="your-csrf-token-value-here">
+
   <link rel="stylesheet" href="{% static 'style/global.css' %}">
 </head>
 
@@ -23,17 +25,19 @@
   </div> -->
   </div>
   <script>
+    let privateChatSockets = {};
     const chatSocket = new WebSocket("ws://" + window.location.host + "/ws/chat/");
 
     chatSocket.onopen = function (e) {
       console.log("The connection was set up successfully!");
     };
+    chatSocket.onerror = function (e) {
+  console.error("WebSocket error:", e);
+};
 
     chatSocket.onclose = function (e) {
       console.log("Something unexpected happened!");
     };
-
-
 
     // document.querySelector("#id_message_send_button").onclick = function (e) {
     //   console("inside click")
@@ -84,6 +88,7 @@
           attachRemoveListeners();
 
           loadMessages(username);
+
         })
         .catch(error => {
           console.error('There was a problem with the fetch operation:', error);
@@ -100,6 +105,7 @@
           chatInnerContainer.innerHTML = ''; // Clear existing messages
 
           messages.length > 0 && messages.forEach(message => {
+            
             // Create a div for the message
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message';
@@ -107,8 +113,18 @@
 
             // Create a paragraph for the message content
             const messageContent = document.createElement('p');
-
-            messageContent.textContent = message.content; // Set the text content of the paragraph
+            if (message.content) {
+    messageContent.textContent = message.content;
+   
+  } else if (message.audio_url) {
+  
+    const audioElement = document.createElement('audio');
+    audioElement.controls = true;
+    audioElement.src = message.audio_url;
+    audioElement.classList.add('custom-audio');
+    messageContent.appendChild(audioElement);
+  }
+ 
 
             // Create a span for the message timestamp and status
             const messageInfo = document.createElement('span');
@@ -158,8 +174,15 @@
     function setupChat(username) {
       const privateChatURL = `/ws/chat/private/${getChatRoomName("{{request.user.username}}", username)}/`;
 
-      // Initialize a new WebSocket for each chat
-      const privateChatSocket = new WebSocket(privateChatURL);
+      if (privateChatSockets[username]) {
+      console.log(`Socket already exists for ${username}`);
+      return;
+    }
+    // Initialize a new WebSocket for each chat
+    const privateChatSocket = new WebSocket(privateChatURL);
+     
+    privateChatSockets[username] = privateChatSocket;
+
 
       privateChatSocket.onopen = function (e) {
         console.log("Private chat connection established with " + username + "!");
@@ -192,7 +215,37 @@
           messageInput.value = ''; // Clear input after sending
         }
       };
+      function sendAudioMessage(audioBlob, recipient) {
+  console.log('Sending audio message...');
+  const formData = new FormData();
+  formData.append('audio', audioBlob, 'audio.wav');
 
+  fetch('/upload-audio/', {
+    method: 'POST',
+    body: formData,
+    // headers: {
+    //   'X-CSRFToken': getCSRFToken()
+    // }
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.file_url) {
+        console.log('Sending audio URL over WebSocket:', data.file_url);
+        privateChatSocket.send(JSON.stringify({
+          audio_url: data.file_url,
+          username: "{{ request.user.username }}",
+          recipient: recipient,
+        }));
+       
+      } else {
+        console.error('Error: No file URL returned');
+      }
+    })
+    .catch(error => console.error('Error sending audio message:', error));
+}
+
+     
+    
       // Handle receiving messages
       privateChatSocket.onmessage = function (e) {
         const data = JSON.parse(e.data);
@@ -209,7 +262,15 @@
 
         // Create a paragraph element for the message text
         const messageContent = document.createElement('p');
-        messageContent.textContent = data.message;
+        if (data.message) {
+    messageContent.textContent = data.message;
+  } else if (data.audio_url) {
+    const audioElement = document.createElement('audio');
+    audioElement.controls = true;
+    audioElement.src = data.audio_url;
+    messageContent.appendChild(audioElement);
+  }
+        
 
         // Create a span element for the time and ticks
         const messageInfo = document.createElement('span');
@@ -246,6 +307,7 @@
         // Scroll to the bottom of the chat to show the new message
         chatMessages.scrollTop = chatMessages.scrollHeight;
       };
+      
 
     }
 

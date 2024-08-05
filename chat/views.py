@@ -5,6 +5,12 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from .models import Message
 from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
+from django.core.files.storage import default_storage
+from django.views.decorators.csrf import csrf_exempt
+from django.core.files.storage import default_storage
+# import os
+# from django.conf import settings
 
 def chatPage(request, *args, **kwargs):
     if not request.user.is_authenticated:
@@ -63,14 +69,27 @@ def get_messages(request, username):
         Q(sender=recipient, recipient=current_user)
     ).order_by('timestamp')
 
-    messages_data = [
-        {
+    messages_data = []
+    for message in messages:
+        message_data = {
             'sender': message.sender.username,
             'recipient': message.recipient.username,
             'content': message.content,
-            'timestamp': message.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+            'timestamp': message.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
         }
-        for message in messages
-    ]
+        if message.audio_url:
+            message_data['audio_url'] = message.audio_url
+        messages_data.append(message_data)
+    
 
     return JsonResponse({'messages': messages_data})
+
+@csrf_exempt
+def upload_audio(request):
+    if request.method == 'POST' and request.FILES.get('audio'):
+        audio_file = request.FILES['audio']
+        file_name = default_storage.save('audio/' + audio_file.name, audio_file)
+        file_url = default_storage.url(file_name)
+        return JsonResponse({'file_url': file_url})
+
+    return JsonResponse({'error': 'No audio file found'}, status=400)
