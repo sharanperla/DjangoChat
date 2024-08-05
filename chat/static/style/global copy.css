@@ -476,6 +476,7 @@ input:hover {
 .chatInnerContainer .my-message {
   background-color: #8fdfff;
   align-self: flex-end;
+  width: 100%;
   border-radius: 10px 10px 10px 0;
 }
 
@@ -571,54 +572,4 @@ input:hover {
 }
 
 
-/* audio tag */
-.custom-audio {
-  width: 100%; /* Make audio player full width */
-  height: 40px; /* Set a custom height */
-  background-color: #f0f0f0; /* Set a background color */
-  border-radius: 5px; /* Round the corners */
-  outline: none; /* Remove default outline */
-  border: 1px solid #ccc; /* Add a border */
-}
 
-/* Custom styles for controls */
-.custom-audio::-webkit-media-controls-panel {
-  background-color: #f0f0f0; /* Panel background color */
-  border-radius: 5px; /* Panel rounded corners */
-}
-
-.custom-audio::-webkit-media-controls-play-button,
-.custom-audio::-webkit-media-controls-current-time-display,
-.custom-audio::-webkit-media-controls-time-remaining-display,
-.custom-audio::-webkit-media-controls-volume-slider,
-.custom-audio::-webkit-media-controls-seek-back-button,
-.custom-audio::-webkit-media-controls-seek-forward-button {
-  filter: hue-rotate(120deg); /* Change icon colors */
-}
-
-.custom-audio::-webkit-media-controls-timeline {
-  background-color: #ccc; /* Change timeline background */
-}
-
-.custom-audio::-webkit-media-controls-mute-button,
-.custom-audio::-webkit-media-controls-fullscreen-button {
-  filter: hue-rotate(120deg); /* Change icon colors */
-}
-
-/* Styles for Firefox */
-.custom-audio::-moz-media-controls {
-  background-color: #f0f0f0; /* Panel background color */
-}
-
-.custom-audio::-moz-media-controls-play-button,
-.custom-audio::-moz-media-controls-mute-button {
-  filter: hue-rotate(120deg); /* Change icon colors */
-}
-
-.custom-audio::-moz-range-track {
-  background-color: #ccc; /* Change timeline background */
-}
-
-.custom-audio::-moz-range-thumb {
-  background-color: #333; /* Change thumb color */
-}

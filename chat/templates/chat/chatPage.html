@@ -1,13 +1,72 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-
 <head>
   <meta name="csrf-token" content="your-csrf-token-value-here">
 
   <link rel="stylesheet" href="{% static 'style/global.css' %}">
 </head>
+<style>
+.custom-audio {
+  width: 10rem; /* Make audio player full width */
+  height: 2rem; /* Set a custom height */
+  background-color: #fff; /* White background for a clean look */
+  border-radius: 25px; /* More rounded corners for a pill shape */
+  outline: none; /* Remove default outline */
+  border: none; /* Remove border for a flat design */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
 
+/* Custom styles for controls */
+.custom-audio::-webkit-media-controls-panel {
+  background-color: transparent; /* Transparent to blend with background */
+  border-radius: 25px; /* Match audio element rounding */
+}
+
+.custom-audio::-webkit-media-controls-play-button,
+.custom-audio::-webkit-media-controls-current-time-display,
+.custom-audio::-webkit-media-controls-time-remaining-display,
+.custom-audio::-webkit-media-controls-volume-slider,
+.custom-audio::-webkit-media-controls-seek-back-button,
+.custom-audio::-webkit-media-controls-seek-forward-button {
+  filter: none; /* Keep icons in default color */
+}
+
+.custom-audio::-webkit-media-controls-timeline {
+  background-color: #e0e0e0; /* Light gray for timeline */
+  border-radius: 2px; /* Slight rounding for timeline */
+}
+
+.custom-audio::-webkit-media-controls-mute-button,
+.custom-audio::-webkit-media-controls-fullscreen-button {
+  filter: none; /* Keep icons in default color */
+}
+
+/* Styles for Firefox */
+.custom-audio::-moz-media-controls {
+  background-color: transparent; /* Transparent to blend with background */
+}
+
+.custom-audio::-moz-media-controls-play-button,
+.custom-audio::-moz-media-controls-mute-button {
+  filter: none; /* Keep icons in default color */
+}
+
+.custom-audio::-moz-range-track {
+  background-color: #e0e0e0; /* Light gray for timeline */
+}
+
+.custom-audio::-moz-range-thumb {
+  background-color: #333; /* Dark color for thumb */
+  border-radius: 50%; /* Circular thumb */
+}
+
+.custom-audio::-webkit-media-controls-current-time-display,
+.custom-audio::-webkit-media-controls-time-remaining-display {
+  font-size: 0.5rem; /* Set font size */
+  color: #333; /* Text color */
+}
+</style>
 <body>
   <div class="container">
     {% block header %}
@@ -56,7 +115,9 @@
     // function getChatRoomName(user1, user2) {
     //   return [user1, user2].sort().join("_");
     // }
+ 
 
+     
     function initiatePrivateChat(username) {
       const container = document.getElementById('chatMenuContainer');
 
@@ -96,16 +157,19 @@
     }
 
     function loadMessages(username) {
+      
       const chatInnerContainer = document.querySelector(`#chatMessages-${username}`);
 
       fetch(`/api/messages/${username}/`)
         .then(response => response.json())
         .then(data => {
+          
           const messages = data.messages;
+  
           chatInnerContainer.innerHTML = ''; // Clear existing messages
 
           messages.length > 0 && messages.forEach(message => {
-            
+             
             // Create a div for the message
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message';
@@ -113,15 +177,15 @@
 
             // Create a paragraph for the message content
             const messageContent = document.createElement('p');
-            if (message.content) {
+      if (message.content) {
     messageContent.textContent = message.content;
    
   } else if (message.audio_url) {
-  
     const audioElement = document.createElement('audio');
     audioElement.controls = true;
     audioElement.src = message.audio_url;
     audioElement.classList.add('custom-audio');
+    audioElement.style='outline: none;'
     messageContent.appendChild(audioElement);
   }
  
@@ -180,7 +244,7 @@
     }
     // Initialize a new WebSocket for each chat
     const privateChatSocket = new WebSocket(privateChatURL);
-     
+    
     privateChatSockets[username] = privateChatSocket;
 
 
@@ -202,7 +266,7 @@
       const chatDiv = document.querySelector(`.chatMenu[data-username="${username}"]`);
       const messageInput = chatDiv.querySelector(`#chatInput-${username}`);
       const sendMessageButton = chatDiv.querySelector(`#id_message_send_button-${username}`);
-
+     
       // Handle sending messages
       sendMessageButton.onclick = function (e) {
         const message = messageInput.value;
@@ -210,11 +274,13 @@
           privateChatSocket.send(JSON.stringify({
             message: message,
             username: "{{ request.user.username }}",
-            recipient: username
+            recipient: username,
+            status: 'sent' 
           }));
           messageInput.value = ''; // Clear input after sending
         }
       };
+
       function sendAudioMessage(audioBlob, recipient) {
   console.log('Sending audio message...');
   const formData = new FormData();
@@ -235,6 +301,7 @@
           audio_url: data.file_url,
           username: "{{ request.user.username }}",
           recipient: recipient,
+          status:'sent'
         }));
        
       } else {
@@ -244,11 +311,28 @@
     .catch(error => console.error('Error sending audio message:', error));
 }
 
-     
-    
+function updateMessageStatus(messageId, status) {
+    privateChatSocket.send(JSON.stringify({
+        message_id: messageId,
+        status: status
+    }));
+}
       // Handle receiving messages
       privateChatSocket.onmessage = function (e) {
         const data = JSON.parse(e.data);
+        console.log(data)
+        if (data.message_id && data.status) {
+        updateMessageStatus(data.message_id,'read');
+    }
+          
+    //     if (data.message_id && data.status) {
+    //     const messageElement = document.querySelector(`.message[data-message-id="${data.message_id}"]`);
+    //     if (messageElement) {
+    //         const statusElement = messageElement.querySelector('.status');
+    //         statusElement.textContent = data.status; // Update status in the chat UI
+    //     }
+    // }
+        console.log(data,'data recieverd')
         // Create a new message container
         const messageDiv = document.createElement('div');
         messageDiv.classList.add('message');
@@ -332,6 +416,9 @@
     setInterval(fetchOnlineUsers, 5000); // Fetch online users every 5 seconds
 
   </script>
+<script>
+
+</script>
 </body>
 
 </html>

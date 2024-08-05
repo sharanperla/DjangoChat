@@ -72,10 +72,13 @@ def get_messages(request, username):
     messages_data = []
     for message in messages:
         message_data = {
+            'id': message.id,  
             'sender': message.sender.username,
             'recipient': message.recipient.username,
             'content': message.content,
             'timestamp': message.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+            'status':message.status,
+            
         }
         if message.audio_url:
             message_data['audio_url'] = message.audio_url
