@@ -27,7 +27,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         
         # Get status from incoming data, default to 'sent'
         status = text_data_json['status']
-        print('Received data:',status)
+        print(text_data_json)
         
         if 'audio_url' in text_data_json:
             audio_url = text_data_json['audio_url']
@@ -49,7 +49,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 }
             )
 
-        elif 'message' in text_data_json:
+        if 'message' in text_data_json:
             message = text_data_json["message"]
             sender_username = text_data_json["username"]
             recipient_username = text_data_json.get("recipient")
@@ -70,21 +70,30 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     }
                 )
 
-        elif 'message_id' in text_data_json and 'status' in text_data_json:
-            message_id = text_data_json['message_id']
+        if 'update' in text_data_json:
+            sender = text_data_json['sender']
+            receiver = text_data_json['receiver']
             status = text_data_json['status']
-            print(status)
-            await self.update_message_status(message_id, status)
+
+            print(f"Status update received: {status}")
+
+            # Fetch user IDs based on usernames
+            sender_user = await database_sync_to_async(User.objects.get)(username=sender)
+            receiver_user = await database_sync_to_async(User.objects.get)(username=receiver)
+
+            # Update the message status
+            await self.update_message_status(sender_user.id, receiver_user.id, status)
+
             # Notify clients about the status update
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
                     "type": "update_message_status",
-                    "message_id": message_id,
+                    "sender": sender,
+                    "receiver": receiver,
                     "status": status
                 }
             )
-
 
 
     async def send_message(self, event):
@@ -118,13 +127,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
             message = Message.objects.create(sender=sender, recipient=recipient, content=content,status=status)
         
         return message  # Ensure the created message is returned
-    @database_sync_to_async
-    def update_message_status(self, message_id, status):
-        print(f"Updating message {message_id} to status {status}")
+
+    async def update_message_status(self, sender_id, receiver_id, status):
         try:
-            message = Message.objects.get(id=message_id)
-            print(message,'message from table')
-            message.status = status
-            message.save()
-        except Message.DoesNotExist:
-             print(f"Message with id {message_id} does not exist")
+            # Find messages with sender, receiver, and status 'sent'
+            messages = await database_sync_to_async(Message.objects.filter)(
+                sender_id=sender_id,
+                receiver_id=receiver_id,
+                status='sent'
+            )
+
+            for message in messages:
+                message.status = status
+                message.save()
+                print(f"Message {message.id} updated to status {status}")
+
+        except Exception as e:
+            print(f"Error updating message status: {e}")

@@ -382,10 +382,12 @@
           .catch(error => console.error('Error sending audio message:', error));
       }
 
-      function updateMessageStatus(messageId, status) {
+      function updateMessageStatus(sender, reciever, status, update) {
         privateChatSocket.send(JSON.stringify({
-          message_id: messageId,
-          status: status
+          sender: sender,
+          reciever: reciever,
+          status: status,
+          update: update
         }));
       }
 
@@ -408,7 +410,7 @@
           updateUnseenMessageBadge(data.username);
         }
         if (data.status && (data.status === 'sent' || data.status === 'Sent' || data.status === 'delivered' || data.status === 'Delivered') && data.username === '{{request.user}}') {
-          updateMessageStatus(data.id, 'delivered')
+          updateMessageStatus(data.username, data.recipient, 'delivered', true)
           data.status = 'delivered'
         }
 
