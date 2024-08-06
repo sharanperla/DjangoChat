@@ -80,12 +80,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             receiver_username = text_data_json['receiver']
             status = text_data_json['status']
 
-            print(f"Status update received: {status}")
+            print(f"Status update received: {status},{sender_username},{receiver_username}")
 
             # Fetch user IDs based on usernames
             sender_user = await database_sync_to_async(User.objects.get)(username=sender_username)
             receiver_user = await database_sync_to_async(User.objects.get)(username=receiver_username)
-
+            print(sender_user, receiver_user )
             # Update the message status
             await self.update_message_status(sender_user.id, receiver_user.id, status)
 

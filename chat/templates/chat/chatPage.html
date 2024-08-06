@@ -399,17 +399,10 @@
         const data = JSON.parse(e.data);
 
         console.log("{{request.user}}", 'this is the user')
-        console.log(data.recipient);
+        console.log(data,'this is ***********************');
 
-        const isCurrentChat = data.recipient === "{{ request.user.username }}";
-        if (isCurrentChat) {
-          console.log("Message received for the current user:", data.message);
-
-          if (data.status === 'sent') {
-            updateMessageStatus(data.username, "{{request.user.username}}", 'delivered', 'update')
-            data.status = 'delivered'
-          }
-
+        const isCurrentChat = data.username === "{{ request.user}}";
+        if (!isCurrentChat) {
           // Increment the unseen message count
           if (!unseenMessagesCount[data.username]) {
             unseenMessagesCount[data.username] = 0;
@@ -418,6 +411,11 @@
           console.log(unseenMessagesCount[data.username]);
           updateUnseenMessageBadge(data.username);
         }
+
+        if (data.status === 'sent') {
+            updateMessageStatus(data.username,data.receiver, 'delivered', true)
+            data.status = 'delivered'
+          }
 
         //     if (data.message_id && data.status) {
         //     updateMessageStatus(data.message_id,'read');
