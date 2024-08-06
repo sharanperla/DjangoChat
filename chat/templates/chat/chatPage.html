@@ -21,7 +21,7 @@
 .custom-audio::-webkit-media-controls-panel {
   background-color: transparent; /* Transparent to blend with background */
   border-radius: 25px; /* Match audio element rounding */
-}
+} 
 
 .custom-audio::-webkit-media-controls-play-button,
 .custom-audio::-webkit-media-controls-current-time-display,
@@ -95,6 +95,7 @@
         badge.style.display = unseenMessagesCount[username] > 0 ? 'inline' : 'none';
     }
 }
+
     const chatSocket = new WebSocket("ws://" + window.location.host + "/ws/chat/");
 
     chatSocket.onopen = function (e) {
@@ -244,10 +245,42 @@
             // Scroll to the bottom of the chat to show the new message
             chatInnerContainer.scrollTop = chatInnerContainer.scrollHeight;
           });
-
+           // Update the last message in the chat menu
+           const lastMessage = messages[messages.length - 1];
+           console.log('last seen message',lastMessage);
+          if (lastMessage) {
+            updateLastMessageInMenu(username, lastMessage);
+          }
         })
         .catch(error => console.error('Error fetching messages:', error));
     }
+
+    function updateLastMessageInMenu(username, message) {
+      const chatMenu = document.querySelector(`.popMenuDescDiv[data-username="${username}"]`);
+      if (chatMenu) {
+        const lastMessageElement = chatMenu.querySelector('.last-message');
+        if (lastMessageElement) {
+          lastMessageElement.textContent = message.content || "Audio message";
+          lastMessageElement.title = message.content || "Audio message";
+
+        
+          const usernameDiv = chatMenu.querySelector('.highlightedUserName');
+          usernameDiv.textContent = message.sender || "user";
+
+          const timestampElement = chatMenu.querySelector('.last-message-timestamp');
+          if (timestampElement) {
+            const timestampDate = new Date(message.timestamp);
+            let hours = timestampDate.getHours();
+            const minutes = String(timestampDate.getMinutes()).padStart(2, '0');
+            const period = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+            const formattedTime = `${String(hours).padStart(2, '0')}:${minutes} ${period}`;
+            timestampElement.textContent = formattedTime;
+          }
+        }
+      }
+    }
+    
 
 
     function setupChat(username) {
@@ -338,7 +371,10 @@ function updateMessageStatus(messageId, status) {
 
       // Handle receiving messages
       privateChatSocket.onmessage = function (e) {
+       
         const data = JSON.parse(e.data);
+        console.log( "{{request.user}}",'this is the user')
+        console.log(data.username);
         const isCurrentChat = data.username === "{{request.user}}";
         if (!isCurrentChat) {
         // Increment the unseen message count
@@ -349,7 +385,7 @@ function updateMessageStatus(messageId, status) {
         console.log(unseenMessagesCount["{{request.user}}"] );
         updateUnseenMessageBadge("{{request.user}}");
     }
-           if(data.status && (data.status==='sent' || data.status==='Sent' || data.status==='delivered' || data.status==='Delivered'  )&& data.username=== '{{request.user.username}}' )
+           if(data.status && (data.status==='sent' || data.status==='Sent' || data.status==='delivered' || data.status==='Delivered'  )&& data.username=== '{{request.user}}' )
           {
             updateMessageStatus(data.id,'delivered')
             data.status='delivered'
@@ -377,12 +413,21 @@ function updateMessageStatus(messageId, status) {
         } else {
           messageDiv.classList.add('other-message');
         }
+       console.log('data to send',data);
 
+        updateLastMessageInMenu(data.username, item={
+          content:data.message,
+          id: data.message_id,
+          status: data.status,
+          sender:data.username,
+          timestamp: "2024-08-06 16:13:05"
+        });
         // Create a paragraph element for the message text
         const messageContent = document.createElement('p');
         if (data.message) {
     messageContent.textContent = data.message;
   } else if (data.audio_url) {
+    
     const audioElement = document.createElement('audio');
     audioElement.controls = true;
     audioElement.src = data.audio_url;
@@ -428,6 +473,7 @@ function updateMessageStatus(messageId, status) {
       
 
     }
+    
 
     function attachRemoveListeners() {
       const container = document.getElementById('chatMenuContainer');
