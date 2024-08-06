@@ -32,7 +32,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if 'audio_url' in text_data_json:
             audio_url = text_data_json['audio_url']
             sender_username = text_data_json["username"]
-            recipient_username = text_data_json["receiver"]
+            recipient_username = text_data_json["recipient"]
             print(recipient_username," - audio")
 
             if recipient_username:
@@ -46,7 +46,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     "type": "send_message",
                     "audio_url": audio_url,
                     "username": sender_username,
-                    "receiver":recipient_username,
+                    "receiver": recipient_username,
                     "status": status
                 }
             )
