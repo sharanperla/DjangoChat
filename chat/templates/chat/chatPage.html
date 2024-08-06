@@ -345,7 +345,7 @@
           privateChatSocket.send(JSON.stringify({
             message: message,
             username: "{{ request.user.username }}",
-            recipient: `${username}`,
+            receiver: `${username}`,
             status: 'sent'
           }));
           messageInput.value = ''; // Clear input after sending
@@ -401,7 +401,6 @@
         console.log(data.username);
         const isCurrentChat = data.username === "{{request.user}}";
         if (!isCurrentChat) {
-          console.log("hello world")
           if (data.status === 'sent') {
             updateMessageStatus(data.username, data.receiver, 'delivered', 'update')
             data.status = 'delivered'
