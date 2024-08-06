@@ -397,12 +397,15 @@
       privateChatSocket.onmessage = function (e) {
 
         const data = JSON.parse(e.data);
-
         console.log("{{request.user}}", 'this is the user')
-        console.log(data,'this is ***********************');
-
-        const isCurrentChat = data.username === "{{ request.user}}";
+        console.log(data.username);
+        const isCurrentChat = data.username === "{{request.user}}";
         if (!isCurrentChat) {
+          console.log("hello world")
+          if (data.status === 'sent') {
+            updateMessageStatus(data.username, data.receiver, 'delivered', 'update')
+            data.status = 'delivered'
+          }
           // Increment the unseen message count
           if (!unseenMessagesCount[data.username]) {
             unseenMessagesCount[data.username] = 0;
@@ -411,11 +414,6 @@
           console.log(unseenMessagesCount[data.username]);
           updateUnseenMessageBadge(data.username);
         }
-
-        if (data.status === 'sent') {
-            updateMessageStatus(data.username,data.receiver, 'delivered', true)
-            data.status = 'delivered'
-          }
 
         //     if (data.message_id && data.status) {
         //     updateMessageStatus(data.message_id,'read');

@@ -32,7 +32,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if 'audio_url' in text_data_json:
             audio_url = text_data_json['audio_url']
             sender_username = text_data_json["username"]
-            recipient_username = text_data_json.get("recipient")
+            recipient_username = text_data_json["recipient"]
             print(recipient_username," - audio")
 
             if recipient_username:
@@ -47,7 +47,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     "audio_url": audio_url,
                     "username": sender_username,
                     "receiver":recipient_username,
-                    "message_id": message_obj.id,
                     "status": status
                 }
             )
@@ -69,8 +68,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         "type": "send_message",
                         "message": message,
                         "username": sender_username,
-                        "receiver":recipient_username,
-                        "message_id": message_obj.id,
+                        "receiver": recipient_username,
                         "status": status  # Include status
                     }
                 )
@@ -80,12 +78,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             receiver_username = text_data_json['receiver']
             status = text_data_json['status']
 
-            print(f"Status update received: {status},{sender_username},{receiver_username}")
+            print(f"Status update received: {status}")
 
             # Fetch user IDs based on usernames
             sender_user = await database_sync_to_async(User.objects.get)(username=sender_username)
             receiver_user = await database_sync_to_async(User.objects.get)(username=receiver_username)
-            print(sender_user, receiver_user )
+
             # Update the message status
             await self.update_message_status(sender_user.id, receiver_user.id, status)
 
@@ -94,8 +92,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 self.room_group_name,
                 {
                     "type": "update_message_status",
-                    "sender": sender_username,
-                    "receiver": receiver_username,
+                    "sender_id": sender_user.id,
+                    "receiver_id": receiver_user.id,
                     "status": status
                 }
             )
@@ -104,7 +102,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = event.get("message", None)
         audio_url = event.get("audio_url", None)
         username = event["username"]
-        receiver=event.get("receiver")
+        receiver = event.get("recipient")
         message_id = event.get("message_id", None)
         status = event.get("status", 'sent')
         response = {
@@ -139,7 +137,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             # Find messages with sender, receiver, and status 'sent'
             messages = await database_sync_to_async(Message.objects.filter)(
                 sender_id=sender_id,
-                receiver_id=receiver_id,
+                recipient_id=receiver_id,
                 status='sent'
             )
 
