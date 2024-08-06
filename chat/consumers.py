@@ -104,10 +104,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = event.get("message", None)
         audio_url = event.get("audio_url", None)
         username = event["username"]
+        receiver=event.get("receiver")
         message_id = event.get("message_id", None)
         status = event.get("status", 'sent')
         response = {
             "username": username,
+            "receiver":receiver
         }
 
         if message:
