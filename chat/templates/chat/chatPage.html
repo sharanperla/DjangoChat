@@ -84,7 +84,17 @@
   </div> -->
   </div>
   <script>
+
     let privateChatSockets = {};
+    let unseenMessagesCount={}
+    function updateUnseenMessageBadge(username) {
+      console.log(username,'updating')
+    const badge = document.querySelector(`#unseenMessagesBadge-${username}`);
+    if (badge) {
+        badge.textContent = unseenMessagesCount[username];
+        badge.style.display = unseenMessagesCount[username] > 0 ? 'inline' : 'none';
+    }
+}
     const chatSocket = new WebSocket("ws://" + window.location.host + "/ws/chat/");
 
     chatSocket.onopen = function (e) {
@@ -119,8 +129,9 @@
 
      
     function initiatePrivateChat(username) {
+      unseenMessagesCount["{{request.user}}"] = 0;
+      updateUnseenMessageBadge("{{request.user}}");
       const container = document.getElementById('chatMenuContainer');
-
       // Check if the chat menu already exists for this user
       if (container.querySelector(`.chatMenu[data-username="${username}"]`)) {
         console.log(`Chat menu for ${username} already exists.`);
@@ -169,6 +180,7 @@
           chatInnerContainer.innerHTML = ''; // Clear existing messages
 
           messages.length > 0 && messages.forEach(message => {
+
              
             // Create a div for the message
             const messageDiv = document.createElement('div');
@@ -235,6 +247,7 @@
         .catch(error => console.error('Error fetching messages:', error));
     }
 
+
     function setupChat(username) {
       const privateChatURL = `/ws/chat/private/${getChatRoomName("{{request.user.username}}", username)}/`;
 
@@ -281,6 +294,7 @@
         }
       };
 
+
       function sendAudioMessage(audioBlob, recipient) {
   console.log('Sending audio message...');
   const formData = new FormData();
@@ -317,13 +331,31 @@ function updateMessageStatus(messageId, status) {
         status: status
     }));
 }
+
+
+
       // Handle receiving messages
       privateChatSocket.onmessage = function (e) {
         const data = JSON.parse(e.data);
-        console.log(data)
-        if (data.message_id && data.status) {
-        updateMessageStatus(data.message_id,'read');
+        const isCurrentChat = data.username === "{{request.user}}";
+        if (!isCurrentChat) {
+        // Increment the unseen message count
+        if (!unseenMessagesCount["{{request.user}}"]) {
+            unseenMessagesCount["{{request.user}}"] = 0;
+        }
+        unseenMessagesCount["{{request.user}}"] += 1;
+        console.log(unseenMessagesCount["{{request.user}}"] );
+        updateUnseenMessageBadge("{{request.user}}");
     }
+           if(data.status && (data.status==='sent' || data.status==='Sent' || data.status==='delivered' || data.status==='Delivered'  )&& data.username=== '{{request.user.username}}' )
+          {
+            updateMessageStatus(data.id,'delivered')
+            data.status='delivered'
+          }
+      
+    //     if (data.message_id && data.status) {
+    //     updateMessageStatus(data.message_id,'read');
+    // }
           
     //     if (data.message_id && data.status) {
     //     const messageElement = document.querySelector(`.message[data-message-id="${data.message_id}"]`);
@@ -374,7 +406,7 @@ function updateMessageStatus(messageId, status) {
         if (data.status === 'delivered') {
           ticks = '✔✔'; // Double tick for delivered
         } else if (data.status === 'read') {
-          ticks = '✔✔'; // Double tick for read, you can add color styling
+          ticks = '✔✔✔'; // Double tick for read, you can add color styling
         }
 
         // Set the time and ticks text

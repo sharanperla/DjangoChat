@@ -31,7 +31,7 @@
       <!-- user list comes here -->
       <div class="userListContainer">
         {% for user in online_users %}
-        <div class="homePageUsercard" id="loadChatMenuBtn" data-username="{{ user.username }}">
+        <div class="homePageUsercard" id="loadChatMenuBtn" data-username="{{ user.username }}" style="position: relative;">
           <div class="avatar-container">
             <img class="homePageUsercardImage"
               src="https://plus.unsplash.com/premium_photo-1671656349322-41de944d259b?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -42,6 +42,17 @@
             <p class="popMenuMessagePreview">
               <span class="highlightedUserName">Sharan&nbsp;</span> hey how are you, have you seen my message
             </p>
+            <div class="chatPreview" >
+              <span id="unseenMessagesBadge-{{request.user}}" class="unseenMessagesBadge" style="display:none;background-color: rgb(21, 200, 72);
+              color: white;
+              border-radius: 50%;
+              padding: 0.3em 0.6em;
+              font-size: 0.8rem;
+              position: absolute; /* Or relative to parent */
+              top:-10px;
+              right: -10px;">0</span>
+              <!-- Other elements like avatar, username -->
+            </div>
           </div>
         </div>
 
@@ -55,7 +66,6 @@
 
     </div>
   </div>
-
 </section>
 
 <script>
@@ -253,5 +263,7 @@ function sendAudioMessage(audioBlob, recipient) {
 //         return null;
 //     }
 // }
+//to update unseenMessageCOunt
+
 
 </script>

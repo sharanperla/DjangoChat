@@ -215,6 +215,7 @@ body {
   padding: 5px;
   cursor: pointer;
   transition: background-color 0.2s;
+  position: relative;
 }
 
 .homePageUsercard:hover {
@@ -516,3 +517,4 @@ input:hover {
 .chatMenu-dropdown-container .dropdown li:hover {
   background-color: #f0f0f0;
 }
+
