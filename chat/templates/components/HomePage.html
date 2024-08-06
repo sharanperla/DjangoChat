@@ -215,7 +215,8 @@ function sendAudioMessage(audioBlob, recipient) {
         chatSocket.send(JSON.stringify({
           audio_url: data.file_url,
           username: "{{ request.user.username }}",
-          recipient: recipient
+          recipient: recipient,
+          status:'sent'
         }));
         console.log('sent')
 

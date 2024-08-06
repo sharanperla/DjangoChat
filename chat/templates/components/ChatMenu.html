@@ -71,7 +71,6 @@
   <div class="chatMessages">
     <div class="chatInnerContainer" id="chatMessages-{{ recipient }}"></div>
   </div>
-
   <div class="chatInput">
     <div style="width: 100%; display: flex; align-items: center">
       <div style="flex: 1">
@@ -145,8 +144,7 @@
             <div id="audio-controls">
               <button
                 id="stop-recording-btn"
-                onclick="stopRecording('{{ recipient }}')"
-              >
+                onclick="stopRecording('{{ recipient }}')">
                 Stop Recording
               </button>
             </div>

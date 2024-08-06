@@ -184,13 +184,15 @@
              
             // Create a div for the message
             const messageDiv = document.createElement('div');
-            messageDiv.className = 'message';
-            messageDiv.classList.add(message.sender === username ? 'other-message' : 'my-message');
 
+            
+            messageDiv.classList.add(message.sender === username ? 'other-message' : 'my-message');
+            
             // Create a paragraph for the message content
             const messageContent = document.createElement('p');
-      if (message.content) {
-    messageContent.textContent = message.content;
+            if (message.content) {
+              messageContent.textContent = message.content;
+              messageDiv.className = 'message';
    
   } else if (message.audio_url) {
     const audioElement = document.createElement('audio');
