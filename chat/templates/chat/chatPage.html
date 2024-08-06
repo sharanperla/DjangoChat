@@ -1,72 +1,94 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta name="csrf-token" content="your-csrf-token-value-here">
 
   <link rel="stylesheet" href="{% static 'style/global.css' %}">
 </head>
 <style>
-.custom-audio {
-  width: 10rem; /* Make audio player full width */
-  height: 2rem; /* Set a custom height */
-  background-color: #fff; /* White background for a clean look */
-  border-radius: 25px; /* More rounded corners for a pill shape */
-  outline: none; /* Remove default outline */
-  border: none; /* Remove border for a flat design */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-}
+  .custom-audio {
+    width: 10rem;
+    /* Make audio player full width */
+    height: 2rem;
+    /* Set a custom height */
+    background-color: #fff;
+    /* White background for a clean look */
+    border-radius: 25px;
+    /* More rounded corners for a pill shape */
+    outline: none;
+    /* Remove default outline */
+    border: none;
+    /* Remove border for a flat design */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow for depth */
+  }
 
-/* Custom styles for controls */
-.custom-audio::-webkit-media-controls-panel {
-  background-color: transparent; /* Transparent to blend with background */
-  border-radius: 25px; /* Match audio element rounding */
-} 
+  /* Custom styles for controls */
+  .custom-audio::-webkit-media-controls-panel {
+    background-color: transparent;
+    /* Transparent to blend with background */
+    border-radius: 25px;
+    /* Match audio element rounding */
+  }
 
-.custom-audio::-webkit-media-controls-play-button,
-.custom-audio::-webkit-media-controls-current-time-display,
-.custom-audio::-webkit-media-controls-time-remaining-display,
-.custom-audio::-webkit-media-controls-volume-slider,
-.custom-audio::-webkit-media-controls-seek-back-button,
-.custom-audio::-webkit-media-controls-seek-forward-button {
-  filter: none; /* Keep icons in default color */
-}
+  .custom-audio::-webkit-media-controls-play-button,
+  .custom-audio::-webkit-media-controls-current-time-display,
+  .custom-audio::-webkit-media-controls-time-remaining-display,
+  .custom-audio::-webkit-media-controls-volume-slider,
+  .custom-audio::-webkit-media-controls-seek-back-button,
+  .custom-audio::-webkit-media-controls-seek-forward-button {
+    filter: none;
+    /* Keep icons in default color */
+  }
 
-.custom-audio::-webkit-media-controls-timeline {
-  background-color: #e0e0e0; /* Light gray for timeline */
-  border-radius: 2px; /* Slight rounding for timeline */
-}
+  .custom-audio::-webkit-media-controls-timeline {
+    background-color: #e0e0e0;
+    /* Light gray for timeline */
+    border-radius: 2px;
+    /* Slight rounding for timeline */
+  }
 
-.custom-audio::-webkit-media-controls-mute-button,
-.custom-audio::-webkit-media-controls-fullscreen-button {
-  filter: none; /* Keep icons in default color */
-}
+  .custom-audio::-webkit-media-controls-mute-button,
+  .custom-audio::-webkit-media-controls-fullscreen-button {
+    filter: none;
+    /* Keep icons in default color */
+  }
 
-/* Styles for Firefox */
-.custom-audio::-moz-media-controls {
-  background-color: transparent; /* Transparent to blend with background */
-}
+  /* Styles for Firefox */
+  .custom-audio::-moz-media-controls {
+    background-color: transparent;
+    /* Transparent to blend with background */
+  }
 
-.custom-audio::-moz-media-controls-play-button,
-.custom-audio::-moz-media-controls-mute-button {
-  filter: none; /* Keep icons in default color */
-}
+  .custom-audio::-moz-media-controls-play-button,
+  .custom-audio::-moz-media-controls-mute-button {
+    filter: none;
+    /* Keep icons in default color */
+  }
 
-.custom-audio::-moz-range-track {
-  background-color: #e0e0e0; /* Light gray for timeline */
-}
+  .custom-audio::-moz-range-track {
+    background-color: #e0e0e0;
+    /* Light gray for timeline */
+  }
 
-.custom-audio::-moz-range-thumb {
-  background-color: #333; /* Dark color for thumb */
-  border-radius: 50%; /* Circular thumb */
-}
+  .custom-audio::-moz-range-thumb {
+    background-color: #333;
+    /* Dark color for thumb */
+    border-radius: 50%;
+    /* Circular thumb */
+  }
 
-.custom-audio::-webkit-media-controls-current-time-display,
-.custom-audio::-webkit-media-controls-time-remaining-display {
-  font-size: 0.5rem; /* Set font size */
-  color: #333; /* Text color */
-}
+  .custom-audio::-webkit-media-controls-current-time-display,
+  .custom-audio::-webkit-media-controls-time-remaining-display {
+    font-size: 0.5rem;
+    /* Set font size */
+    color: #333;
+    /* Text color */
+  }
 </style>
+
 <body>
   <div class="container">
     {% block header %}
@@ -86,15 +108,15 @@
   <script>
 
     let privateChatSockets = {};
-    let unseenMessagesCount={}
+    let unseenMessagesCount = {}
     function updateUnseenMessageBadge(username) {
-      console.log(username,'updating')
-    const badge = document.querySelector(`#unseenMessagesBadge-${username}`);
-    if (badge) {
+      console.log(username, 'updating')
+      const badge = document.querySelector(`#unseenMessagesBadge-${username}`);
+      if (badge) {
         badge.textContent = unseenMessagesCount[username];
         badge.style.display = unseenMessagesCount[username] > 0 ? 'inline' : 'none';
+      }
     }
-}
 
     const chatSocket = new WebSocket("ws://" + window.location.host + "/ws/chat/");
 
@@ -102,8 +124,8 @@
       console.log("The connection was set up successfully!");
     };
     chatSocket.onerror = function (e) {
-  console.error("WebSocket error:", e);
-};
+      console.error("WebSocket error:", e);
+    };
 
     chatSocket.onclose = function (e) {
       console.log("Something unexpected happened!");
@@ -126,12 +148,12 @@
     // function getChatRoomName(user1, user2) {
     //   return [user1, user2].sort().join("_");
     // }
- 
 
-     
+
+
     function initiatePrivateChat(username) {
-      unseenMessagesCount["{{request.user}}"] = 0;
-      updateUnseenMessageBadge("{{request.user}}");
+      unseenMessagesCount[username] = 0;
+      updateUnseenMessageBadge(username);
       const container = document.getElementById('chatMenuContainer');
       // Check if the chat menu already exists for this user
       if (container.querySelector(`.chatMenu[data-username="${username}"]`)) {
@@ -169,41 +191,41 @@
     }
 
     function loadMessages(username) {
-      
+
       const chatInnerContainer = document.querySelector(`#chatMessages-${username}`);
 
       fetch(`/api/messages/${username}/`)
         .then(response => response.json())
         .then(data => {
-          
+
           const messages = data.messages;
-  
+
           chatInnerContainer.innerHTML = ''; // Clear existing messages
 
           messages.length > 0 && messages.forEach(message => {
 
-             
+
             // Create a div for the message
             const messageDiv = document.createElement('div');
 
-            
+
             messageDiv.classList.add(message.sender === username ? 'other-message' : 'my-message');
-            
+
             // Create a paragraph for the message content
             const messageContent = document.createElement('p');
             if (message.content) {
               messageContent.textContent = message.content;
               messageDiv.className = 'message';
-   
-  } else if (message.audio_url) {
-    const audioElement = document.createElement('audio');
-    audioElement.controls = true;
-    audioElement.src = message.audio_url;
-    audioElement.classList.add('custom-audio');
-    audioElement.style='outline: none;'
-    messageContent.appendChild(audioElement);
-  }
- 
+
+            } else if (message.audio_url) {
+              const audioElement = document.createElement('audio');
+              audioElement.controls = true;
+              audioElement.src = message.audio_url;
+              audioElement.classList.add('custom-audio');
+              audioElement.style = 'outline: none;'
+              messageContent.appendChild(audioElement);
+            }
+
 
             // Create a span for the message timestamp and status
             const messageInfo = document.createElement('span');
@@ -245,9 +267,9 @@
             // Scroll to the bottom of the chat to show the new message
             chatInnerContainer.scrollTop = chatInnerContainer.scrollHeight;
           });
-           // Update the last message in the chat menu
-           const lastMessage = messages[messages.length - 1];
-           console.log('last seen message',lastMessage);
+          // Update the last message in the chat menu
+          const lastMessage = messages[messages.length - 1];
+          console.log('last seen message', lastMessage);
           if (lastMessage) {
             updateLastMessageInMenu(username, lastMessage);
           }
@@ -263,7 +285,7 @@
           lastMessageElement.textContent = message.content || "Audio message";
           lastMessageElement.title = message.content || "Audio message";
 
-        
+
           const usernameDiv = chatMenu.querySelector('.highlightedUserName');
           usernameDiv.textContent = message.sender || "user";
 
@@ -280,20 +302,20 @@
         }
       }
     }
-    
+
 
 
     function setupChat(username) {
       const privateChatURL = `/ws/chat/private/${getChatRoomName("{{request.user.username}}", username)}/`;
 
-      if (privateChatSockets[username]) {
-      console.log(`Socket already exists for ${username}`);
-      return;
-    }
-    // Initialize a new WebSocket for each chat
-    const privateChatSocket = new WebSocket(privateChatURL);
-    
-    privateChatSockets[username] = privateChatSocket;
+      //   if (privateChatSockets[username]) {
+      //   console.log(`Socket already exists for ${username}`);
+      //   return;
+      // }
+      // Initialize a new WebSocket for each chat
+      const privateChatSocket = new WebSocket(privateChatURL);
+
+      privateChatSockets[username] = privateChatSocket;
 
 
       privateChatSocket.onopen = function (e) {
@@ -314,7 +336,7 @@
       const chatDiv = document.querySelector(`.chatMenu[data-username="${username}"]`);
       const messageInput = chatDiv.querySelector(`#chatInput-${username}`);
       const sendMessageButton = chatDiv.querySelector(`#id_message_send_button-${username}`);
-     
+
       // Handle sending messages
       sendMessageButton.onclick = function (e) {
         const message = messageInput.value;
@@ -323,7 +345,7 @@
             message: message,
             username: "{{ request.user.username }}",
             recipient: username,
-            status: 'sent' 
+            status: 'sent'
           }));
           messageInput.value = ''; // Clear input after sending
         }
@@ -331,78 +353,77 @@
 
 
       function sendAudioMessage(audioBlob, recipient) {
-  console.log('Sending audio message...');
-  const formData = new FormData();
-  formData.append('audio', audioBlob, 'audio.wav');
+        console.log('Sending audio message...');
+        const formData = new FormData();
+        formData.append('audio', audioBlob, 'audio.wav');
 
-  fetch('/upload-audio/', {
-    method: 'POST',
-    body: formData,
-    // headers: {
-    //   'X-CSRFToken': getCSRFToken()
-    // }
-  })
-    .then(response => response.json())
-    .then(data => {
-      if (data.file_url) {
-        console.log('Sending audio URL over WebSocket:', data.file_url);
-        privateChatSocket.send(JSON.stringify({
-          audio_url: data.file_url,
-          username: "{{ request.user.username }}",
-          recipient: recipient,
-          status:'sent'
-        }));
-       
-      } else {
-        console.error('Error: No file URL returned');
+        fetch('/upload-audio/', {
+          method: 'POST',
+          body: formData,
+          // headers: {
+          //   'X-CSRFToken': getCSRFToken()
+          // }
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.file_url) {
+              console.log('Sending audio URL over WebSocket:', data.file_url);
+              privateChatSocket.send(JSON.stringify({
+                audio_url: data.file_url,
+                username: "{{ request.user.username }}",
+                recipient: recipient,
+                status: 'sent'
+              }));
+
+            } else {
+              console.error('Error: No file URL returned');
+            }
+          })
+          .catch(error => console.error('Error sending audio message:', error));
       }
-    })
-    .catch(error => console.error('Error sending audio message:', error));
-}
 
-function updateMessageStatus(messageId, status) {
-    privateChatSocket.send(JSON.stringify({
-        message_id: messageId,
-        status: status
-    }));
-}
+      function updateMessageStatus(messageId, status) {
+        privateChatSocket.send(JSON.stringify({
+          message_id: messageId,
+          status: status
+        }));
+      }
 
 
 
       // Handle receiving messages
       privateChatSocket.onmessage = function (e) {
-       
+
         const data = JSON.parse(e.data);
-        console.log( "{{request.user}}",'this is the user')
+        console.log("{{request.user}}", 'this is the user')
         console.log(data.username);
         const isCurrentChat = data.username === "{{request.user}}";
         if (!isCurrentChat) {
-        // Increment the unseen message count
-        if (!unseenMessagesCount["{{request.user}}"]) {
-            unseenMessagesCount["{{request.user}}"] = 0;
-        }
-        unseenMessagesCount["{{request.user}}"] += 1;
-        console.log(unseenMessagesCount["{{request.user}}"] );
-        updateUnseenMessageBadge("{{request.user}}");
-    }
-           if(data.status && (data.status==='sent' || data.status==='Sent' || data.status==='delivered' || data.status==='Delivered'  )&& data.username=== '{{request.user}}' )
-          {
-            updateMessageStatus(data.id,'delivered')
-            data.status='delivered'
+          // Increment the unseen message count
+          if (!unseenMessagesCount[data.username]) {
+            unseenMessagesCount[data.username] = 0;
           }
-      
-    //     if (data.message_id && data.status) {
-    //     updateMessageStatus(data.message_id,'read');
-    // }
-          
-    //     if (data.message_id && data.status) {
-    //     const messageElement = document.querySelector(`.message[data-message-id="${data.message_id}"]`);
-    //     if (messageElement) {
-    //         const statusElement = messageElement.querySelector('.status');
-    //         statusElement.textContent = data.status; // Update status in the chat UI
-    //     }
-    // }
-        console.log(data,'data recieverd')
+          unseenMessagesCount[data.username] += 1;
+          console.log(unseenMessagesCount[data.username]);
+          updateUnseenMessageBadge(data.username);
+        }
+        if (data.status && (data.status === 'sent' || data.status === 'Sent' || data.status === 'delivered' || data.status === 'Delivered') && data.username === '{{request.user}}') {
+          updateMessageStatus(data.id, 'delivered')
+          data.status = 'delivered'
+        }
+
+        //     if (data.message_id && data.status) {
+        //     updateMessageStatus(data.message_id,'read');
+        // }
+
+        //     if (data.message_id && data.status) {
+        //     const messageElement = document.querySelector(`.message[data-message-id="${data.message_id}"]`);
+        //     if (messageElement) {
+        //         const statusElement = messageElement.querySelector('.status');
+        //         statusElement.textContent = data.status; // Update status in the chat UI
+        //     }
+        // }
+        console.log(data, 'data recieverd')
         // Create a new message container
         const messageDiv = document.createElement('div');
         messageDiv.classList.add('message');
@@ -413,27 +434,27 @@ function updateMessageStatus(messageId, status) {
         } else {
           messageDiv.classList.add('other-message');
         }
-       console.log('data to send',data);
+        console.log('data to send', data);
 
-        updateLastMessageInMenu(data.username, item={
-          content:data.message,
+        updateLastMessageInMenu(data.username, item = {
+          content: data.message,
           id: data.message_id,
           status: data.status,
-          sender:data.username,
+          sender: data.username,
           timestamp: "2024-08-06 16:13:05"
         });
         // Create a paragraph element for the message text
         const messageContent = document.createElement('p');
         if (data.message) {
-    messageContent.textContent = data.message;
-  } else if (data.audio_url) {
-    
-    const audioElement = document.createElement('audio');
-    audioElement.controls = true;
-    audioElement.src = data.audio_url;
-    messageContent.appendChild(audioElement);
-  }
-        
+          messageContent.textContent = data.message;
+        } else if (data.audio_url) {
+
+          const audioElement = document.createElement('audio');
+          audioElement.controls = true;
+          audioElement.src = data.audio_url;
+          messageContent.appendChild(audioElement);
+        }
+
 
         // Create a span element for the time and ticks
         const messageInfo = document.createElement('span');
@@ -470,10 +491,10 @@ function updateMessageStatus(messageId, status) {
         // Scroll to the bottom of the chat to show the new message
         chatMessages.scrollTop = chatMessages.scrollHeight;
       };
-      
+
 
     }
-    
+
 
     function attachRemoveListeners() {
       const container = document.getElementById('chatMenuContainer');
@@ -496,9 +517,9 @@ function updateMessageStatus(messageId, status) {
     setInterval(fetchOnlineUsers, 5000); // Fetch online users every 5 seconds
 
   </script>
-<script>
+  <script>
 
-</script>
+  </script>
 </body>
 
 </html>

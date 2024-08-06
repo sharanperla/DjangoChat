@@ -32,19 +32,20 @@
       <div class="userListContainer">
         {% for user in online_users %}
         {% if user.username != request.user.username %}
-            <div class="homePageUsercard" id="loadChatMenuBtn" data-username="{{ user.username }}" style="position: relative;">
-              <div class="avatar-container">
-                <img class="homePageUsercardImage"
-                  src="https://plus.unsplash.com/premium_photo-1671656349322-41de944d259b?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                  alt="User Avatar" />
-              </div>
-              <div class="popMenuDescDiv" data-username="{{ user.username }}">
-                <h4 class="popMenuUserName">{{ user.username }}</h4>
-                <p class="popMenuMessagePreview">
-                  <span class="highlightedUserName">Sharan</span>&nbsp;<span class="last-message"> ...</span>
-                </p>
-                <div class="chatPreview" >
-                  <span id="unseenMessagesBadge-{{request.user}}" class="unseenMessagesBadge" style="display:none;background-color: rgb(21, 200, 72);
+        <div class="homePageUsercard" id="loadChatMenuBtn" data-username="{{ user.username }}"
+          style="position: relative;">
+          <div class="avatar-container">
+            <img class="homePageUsercardImage"
+              src="https://plus.unsplash.com/premium_photo-1671656349322-41de944d259b?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="User Avatar" />
+          </div>
+          <div class="popMenuDescDiv" data-username="{{ user.username }}">
+            <h4 class="popMenuUserName">{{ user.username }}</h4>
+            <p class="popMenuMessagePreview">
+              <span class="highlightedUserName">Sharan</span>&nbsp;<span class="last-message"> ...</span>
+            </p>
+            <div class="chatPreview">
+              <span id="unseenMessagesBadge-{{user.username}}" class="unseenMessagesBadge" style="display:none;background-color: rgb(21, 200, 72);
                   color: white;
                   border-radius: 50%;
                   padding: 0.3em 0.6em;
@@ -52,11 +53,11 @@
                   position: absolute; /* Or relative to parent */
                   top:-10px;
                   right: -10px;">0</span>
-                  <!-- Other elements like avatar, username -->
-                </div>
-              </div>
+              <!-- Other elements like avatar, username -->
             </div>
-          {% endif %}
+          </div>
+        </div>
+        {% endif %}
 
         {% endfor %}
 
@@ -154,80 +155,80 @@
     }
   });
 </script>
- <!-- audio message -->
+<!-- audio message -->
 <script>
   // Start recording
   let mediaRecorder;
-let audioChunks = [];
+  let audioChunks = [];
 
-function startRecording(recipient) {
-  const audiocont = document.getElementById(`recording-container-${recipient}`);
-  audiocont.style.display = 'block';
+  function startRecording(recipient) {
+    const audiocont = document.getElementById(`recording-container-${recipient}`);
+    audiocont.style.display = 'block';
 
-  navigator.mediaDevices.getUserMedia({ audio: true })
-    .then(stream => {
-      mediaRecorder = new MediaRecorder(stream);
-      
-      mediaRecorder.ondataavailable = event => {
-        audioChunks.push(event.data);
-      };
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+        mediaRecorder = new MediaRecorder(stream);
 
+        mediaRecorder.ondataavailable = event => {
+          audioChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+          sendAudioMessage(audioBlob, recipient);
+        };
+
+        mediaRecorder.start();
+      })
+      .catch(error => console.error('Error accessing media devices.', error));
+  }
+  function stopRecording(recipient) {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      mediaRecorder.stop();
       mediaRecorder.onstop = () => {
         const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
         sendAudioMessage(audioBlob, recipient);
       };
+      console.log('Recording stopped.');
+    } else {
+      console.error('No active recording to stop.');
+    }
 
-      mediaRecorder.start();
-    })
-    .catch(error => console.error('Error accessing media devices.', error));
-}
-function stopRecording(recipient) {
-  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-    mediaRecorder.stop();
-    mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-        sendAudioMessage(audioBlob, recipient);
-      };
-    console.log('Recording stopped.');
-  } else {
-    console.error('No active recording to stop.');
+    const audiocont = document.getElementById(`recording-container-${recipient}`);
+    audiocont.style.display = 'none';
   }
-  
-  const audiocont = document.getElementById(`recording-container-${recipient}`);
-  audiocont.style.display = 'none';
-}
 
-// Add more detailed logging
-function sendAudioMessage(audioBlob, recipient) {
-  console.log('Sending audio message...');
-  const formData = new FormData();
-  formData.append('audio', audioBlob, 'audio.wav');
+  // Add more detailed logging
+  function sendAudioMessage(audioBlob, recipient) {
+    console.log('Sending audio message...');
+    const formData = new FormData();
+    formData.append('audio', audioBlob, 'audio.wav');
 
-  fetch('/upload-audio/', {
-    method: 'POST',
-    body: formData,
-    // headers: {
-    //   'X-CSRFToken': getCSRFToken()
-    // }
-  })
-    .then(response => response.json())
-    .then(data => {
-      if (data.file_url) {
-        console.log('Sending audio URL over WebSocket:', data.file_url);
-        chatSocket.send(JSON.stringify({
-          audio_url: data.file_url,
-          username: "{{ request.user.username }}",
-          recipient: recipient,
-          status:'sent'
-        }));
-        console.log('sent')
-
-      } else {
-        console.error('Error: No file URL returned');
-      }
+    fetch('/upload-audio/', {
+      method: 'POST',
+      body: formData,
+      // headers: {
+      //   'X-CSRFToken': getCSRFToken()
+      // }
     })
-    .catch(error => console.error('Error sending audio message:', error));
-}
+      .then(response => response.json())
+      .then(data => {
+        if (data.file_url) {
+          console.log('Sending audio URL over WebSocket:', data.file_url);
+          chatSocket.send(JSON.stringify({
+            audio_url: data.file_url,
+            username: "{{ request.user.username }}",
+            recipient: recipient,
+            status: 'sent'
+          }));
+          console.log('sent')
+
+        } else {
+          console.error('Error: No file URL returned');
+        }
+      })
+      .catch(error => console.error('Error sending audio message:', error));
+  }
 
 
   // // Update sendAudioMessage function to accept chatSocket
@@ -256,17 +257,17 @@ function sendAudioMessage(audioBlob, recipient) {
   //     })
   //     .catch(error => console.error('Error sending audio message:', error));
   // }
-// Function to get CSRF Token
-// function getCSRFToken() {
-//     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
-//     if (csrfTokenElement) {
-//         return csrfTokenElement.getAttribute('content');
-//     } else {
-//         console.error('CSRF token element not found');
-//         return null;
-//     }
-// }
-//to update unseenMessageCOunt
+  // Function to get CSRF Token
+  // function getCSRFToken() {
+  //     const csrfTokenElement = document.querySelector('meta[name="csrf-token"]');
+  //     if (csrfTokenElement) {
+  //         return csrfTokenElement.getAttribute('content');
+  //     } else {
+  //         console.error('CSRF token element not found');
+  //         return null;
+  //     }
+  // }
+  //to update unseenMessageCOunt
 
 
 </script>
