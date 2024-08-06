@@ -306,6 +306,7 @@
 
 
     function setupChat(username) {
+      console.log(username)
       const privateChatURL = `/ws/chat/private/${getChatRoomName("{{request.user.username}}", username)}/`;
 
       //   if (privateChatSockets[username]) {
@@ -344,7 +345,7 @@
           privateChatSocket.send(JSON.stringify({
             message: message,
             username: "{{ request.user.username }}",
-            recipient: username,
+            recipient: `${username}`,
             status: 'sent'
           }));
           messageInput.value = ''; // Clear input after sending
@@ -385,12 +386,11 @@
       function updateMessageStatus(sender, reciever, status, update) {
         privateChatSocket.send(JSON.stringify({
           sender: sender,
-          reciever: reciever,
+          receiver: reciever,
           status: status,
           update: update
         }));
       }
-
 
 
       // Handle receiving messages
@@ -398,9 +398,13 @@
 
         const data = JSON.parse(e.data);
         console.log("{{request.user}}", 'this is the user')
-        console.log(data.username);
+        console.log(data.recipient);
         const isCurrentChat = data.username === "{{request.user}}";
         if (!isCurrentChat) {
+          console.log("hello world")
+          if (data.status === 'sent') {
+            updateMessageStatus(data.username, "{{request.user}}", 'delivered', 'update')
+          }
           // Increment the unseen message count
           if (!unseenMessagesCount[data.username]) {
             unseenMessagesCount[data.username] = 0;
@@ -409,10 +413,7 @@
           console.log(unseenMessagesCount[data.username]);
           updateUnseenMessageBadge(data.username);
         }
-        if (data.status && (data.status === 'sent' || data.status === 'Sent' || data.status === 'delivered' || data.status === 'Delivered') && data.username === '{{request.user}}') {
-          updateMessageStatus(data.username, data.recipient, 'delivered', true)
-          data.status = 'delivered'
-        }
+        data.status = 'delivered'
 
         //     if (data.message_id && data.status) {
         //     updateMessageStatus(data.message_id,'read');
@@ -425,7 +426,7 @@
         //         statusElement.textContent = data.status; // Update status in the chat UI
         //     }
         // }
-        console.log(data, 'data recieverd')
+        console.log(data, 'data recieved')
         // Create a new message container
         const messageDiv = document.createElement('div');
         messageDiv.classList.add('message');
