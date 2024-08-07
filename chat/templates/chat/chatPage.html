@@ -497,20 +497,6 @@
         //         statusElement.textContent = data.status; // Update status in the chat UI
         //     }
         // }
-        // Create a new message container
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add(data.username === "{{ request.user.username }}" ? 'my-message' : 'other-message');
-
-
-
-        // Determine if the message is from the current user
-        // if (data.username === "{{ request.user.username }}") {
-        //   messageDiv.classList.add('my-message');
-        // } else {
-        //   messageDiv.classList.add('other-message');
-        // }
-        // console.log('data to send', data);
-
         updateLastMessageInMenu(data.username, item = {
           content: data.message,
           id: data.message_id,
@@ -519,21 +505,28 @@
           recipient: data.receiver,
           timestamp: "2024-08-06 16:13:05"
         });
-        // Create a paragraph element for the message text
-        const messageContent = document.createElement('p');
-        if (data.message) {
-          messageContent.textContent = data.message;
-          messageDiv.className = 'message';
-        } else if (data.audio_url) {
+        // Create a div for the message
+        const messageDiv = document.createElement('div');
+            
 
-          const audioElement = document.createElement('audio');
-          audioElement.controls = true;
-          audioElement.src = data.audio_url;
-          audioElement.classList.add('custom-audio');
-          audioElement.style = 'outline: none;'
-          messageContent.appendChild(audioElement);
-        }
+            
+            // Create a paragraph for the message content
+            const messageContent = document.createElement('p');
+            if (data.message) {
+              messageDiv.className = 'message';
+              messageDiv.classList.add(data.sender === username ? 'other-message' : 'my-message');
+              messageContent.textContent = data.message;
 
+              
+            } else if (data.audio_url) {
+              messageDiv.classList.add(data.sender === username ? 'other-message' : 'my-message');
+              const audioElement = document.createElement('audio');
+              audioElement.controls = true;
+              audioElement.src = data.audio_url;
+              audioElement.classList.add('custom-audio');
+              audioElement.style = 'outline: none;'
+              messageContent.appendChild(audioElement);
+            }
 
         // Create a span element for the time and ticks
         const messageInfo = document.createElement('span');
