@@ -175,6 +175,10 @@
 
           const chatMenu = tempDiv.querySelector('.chatMenu');
           chatMenu.dataset.username = username;
+          if (container.children.length >= 3) {
+                // Remove the first chat menu if there are already 3
+                container.removeChild(container.firstElementChild);
+            }
 
           container.appendChild(chatMenu);
 
