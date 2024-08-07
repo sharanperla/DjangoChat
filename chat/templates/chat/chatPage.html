@@ -507,22 +507,22 @@
         });
         // Create a div for the message
         const messageDiv = document.createElement('div');
-            
-            // Create a paragraph for the message content
-            const messageContent = document.createElement('p');
-            if (data.message) {
-              messageDiv.className = 'message';
-              messageDiv.classList.add(data.username === username ? 'other-message' : 'my-message');
-              messageContent.textContent = data.message;
-            } else if (data.audio_url) {
-              messageDiv.classList.add(data.username === username ? 'other-message' : 'my-message');
-              const audioElement = document.createElement('audio');
-              audioElement.controls = true;
-              audioElement.src = data.audio_url;
-              audioElement.classList.add('custom-audio');
-              audioElement.style = 'outline: none;'
-              messageContent.appendChild(audioElement);
-            }
+
+        // Create a paragraph for the message content
+        const messageContent = document.createElement('p');
+        if (data.message) {
+          messageDiv.className = 'message';
+          messageDiv.classList.add(data.username === username ? 'other-message' : 'my-message');
+          messageContent.textContent = data.message;
+        } else if (data.audio_url) {
+          messageDiv.classList.add(data.username === username ? 'other-message' : 'my-message');
+          const audioElement = document.createElement('audio');
+          audioElement.controls = true;
+          audioElement.src = data.audio_url;
+          audioElement.classList.add('custom-audio');
+          audioElement.style = 'outline: none;'
+          messageContent.appendChild(audioElement);
+        }
 
         // Create a span element for the time and ticks
         const messageInfo = document.createElement('span');
