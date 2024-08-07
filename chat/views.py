@@ -11,6 +11,46 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
 # import os
 # from django.conf import settings
+# views.py
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .models import Message
+from django.contrib.auth.models import User
+from django.db.models import Q
+
+@login_required
+def get_last_messages(request):
+    users = User.objects.exclude(id=request.user.id)
+    last_messages = {}
+
+    for user in users:
+        # Get the last message sent or received between the current user and this user
+        last_message = Message.objects.filter(
+            Q(sender=request.user, recipient=user) |
+            Q(sender=user, recipient=request.user)
+        ).order_by('-timestamp').first()
+
+        if last_message:
+            # Check if message content is null and audio_url exists
+            if last_message.content:
+                message_content = last_message.content
+            elif last_message.audio_url:
+                message_content = "Audio message"
+            else:
+                message_content = "No messages yet"
+
+            last_messages[user.username] = {
+                'content': message_content,
+                'sender': last_message.sender.username
+            }
+        else:
+            last_messages[user.username] = {
+                'content': "No messages yet",
+                'sender': "None"
+            }
+
+    return JsonResponse({'last_messages': last_messages})
+
 
 def chatPage(request, *args, **kwargs):
     if not request.user.is_authenticated:
@@ -96,3 +136,4 @@ def upload_audio(request):
         return JsonResponse({'file_url': file_url})
 
     return JsonResponse({'error': 'No audio file found'}, status=400)
+

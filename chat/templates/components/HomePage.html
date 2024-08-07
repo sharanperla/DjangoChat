@@ -42,7 +42,7 @@
           <div class="popMenuDescDiv" data-username="{{ user.username }}">
             <h4 class="popMenuUserName">{{ user.username }}</h4>
             <p class="popMenuMessagePreview">
-              <span class="highlightedUserName">Sharan</span>&nbsp;<span class="last-message"> ...</span>
+              <span class="highlightedUserName">Sharan</span>&nbsp;<span class="last-message">Loading..</span>
             </p>
             <div class="chatPreview">
               <span id="unseenMessagesBadge-{{user.username}}" class="unseenMessagesBadge" style="display:flex;background-color: rgb(21, 200, 72);
@@ -109,6 +109,30 @@
     });
   });
 
+</script>
+<!-- to displaay the last message -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Fetch the last messages using AJAX
+    fetch('/get_last_messages/')
+      .then(response => response.json())
+      .then(data => {
+        const lastMessages = data.last_messages;
+        const userCards = document.querySelectorAll('.homePageUsercard');
+        userCards.forEach(card => {
+          const username = card.getAttribute('data-username');
+          const lastMessageElement = card.querySelector('.last-message');
+          const highlightedUserNameElement = card.querySelector('.highlightedUserName');
+
+          // Update last message and sender
+          if (lastMessages[username]) {
+            lastMessageElement.textContent = lastMessages[username].content || 'No messages yet';
+            highlightedUserNameElement.textContent = lastMessages[username].sender || 'None';
+          }
+        });
+      })
+      .catch(error => console.error('Error fetching last messages:', error));
+  });
 </script>
 
 <script>

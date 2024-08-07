@@ -14,6 +14,7 @@ urlpatterns = [
     path('load-chat-menu/<str:recipient_username>/', chat_views.load_chat_menu, name='load_chat_menu'),
     path('api/messages/<str:username>/', chat_views.get_messages, name='get_messages'),
     path('upload-audio/', chat_views.upload_audio, name='upload_audio'),
+    path('get_last_messages/', chat_views.get_last_messages, name='get_last_messages'),
 ]
 
 if settings.DEBUG:
