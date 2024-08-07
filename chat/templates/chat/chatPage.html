@@ -403,7 +403,6 @@
         if (isCurrentChat) {
           if (data.status && (data.status === 'sent' || data.status === 'delivered' || data.status === 'read') && data.username === username) {
             updateMessageStatus(data.username, "{{request.user.username}}", 'delivered', 'update')
-            data.status = 'delivered'
           }
           // Increment the unseen message count
           if (!unseenMessagesCount[data.username]) {
@@ -413,6 +412,7 @@
           console.log(unseenMessagesCount[data.username]);
           updateUnseenMessageBadge(data.username);
         }
+        data.status = 'delivered'
 
         //     if (data.message_id && data.status) {
         //     updateMessageStatus(data.message_id,'read');

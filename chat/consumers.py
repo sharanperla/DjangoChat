@@ -43,7 +43,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
-                    "type": "send_message",
+                    "type": "send_audio_message",
                     "audio_url": audio_url,
                     "username": sender_username,
                     "receiver": recipient_username,
@@ -73,26 +73,42 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     }
                 )
 
-        if 'update' in text_data_json:
-            sender_username = text_data_json['sender']
-            receiver_username = text_data_json['receiver']
-            status = text_data_json['status']
+        # if 'update' in text_data_json:
+        #     sender_username = text_data_json['sender']
+        #     receiver_username = text_data_json['receiver']
+        #     status = text_data_json['status']
 
-            print(f"Status update received: {status}")
+        #     print(f"Status update received: {status}")
 
-            # Notify clients about the status update
-            await self.channel_layer.group_send(
-                self.room_group_name,
-                {
-                    "type": "send_message",
-                    "username": sender_username,
-                    "receiver": sender_username,
-                    "status": status
-                }
-            )
+        #     # Notify clients about the status update
+        #     await self.channel_layer.group_send(
+        #         self.room_group_name,
+        #         {
+        #             "type": "send_message",
+        #             "username": sender_username,
+        #             "receiver": sender_username,
+        #             "status": status
+        #         }
+        #     )
 
     async def send_message(self, event):
         message = event.get("message", None)
+        username = event["username"]
+        receiver = event.get("receiver")
+        message_id = event.get("message_id", None)
+        status = event.get("status", 'sent')
+        response = {
+            "username": username,
+            "receiver": receiver,
+            "message" : message,
+            "status" : status 
+        }
+        if message_id:
+            response["message_id"] = message_id
+        await self.send(text_data=json.dumps(response))
+
+
+    async def send_audio_message(self, event):
         audio_url = event.get("audio_url", None)
         username = event["username"]
         receiver = event.get("receiver")
@@ -100,19 +116,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
         status = event.get("status", 'sent')
         response = {
             "username": username,
-            "receiver":receiver
+            "receiver":receiver,
+            "audio_url" : audio_url,
+            "status" : status 
         }
-
-        if message:
-            response["message"] = message
-        if audio_url:
-            response["audio_url"] = audio_url
         if message_id:
             response["message_id"] = message_id
-        if status:
-            response["status"] = status 
-
         await self.send(text_data=json.dumps(response))
+
 
     @database_sync_to_async
     def save_message(self, sender_username, recipient_username, content, is_audio=False,status='sent'):
