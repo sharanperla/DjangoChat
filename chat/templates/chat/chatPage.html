@@ -176,9 +176,9 @@
           const chatMenu = tempDiv.querySelector('.chatMenu');
           chatMenu.dataset.username = username;
           if (container.children.length >= 3) {
-                // Remove the first chat menu if there are already 3
-                container.removeChild(container.firstElementChild);
-            }
+            // Remove the first chat menu if there are already 3
+            container.removeChild(container.firstElementChild);
+          }
 
           container.appendChild(chatMenu);
 
@@ -193,7 +193,7 @@
           console.error('There was a problem with the fetch operation:', error);
         });
     }
-  
+
 
 
     function loadMessages(username) {
@@ -215,15 +215,17 @@
             const messageDiv = document.createElement('div');
 
 
-            messageDiv.classList.add(message.sender === username ? 'other-message' : 'my-message');
 
             // Create a paragraph for the message content
             const messageContent = document.createElement('p');
             if (message.content) {
-              messageContent.textContent = message.content;
               messageDiv.className = 'message';
+              messageDiv.classList.add(message.sender === username ? 'other-message' : 'my-message');
+              messageContent.textContent = message.content;
+
 
             } else if (message.audio_url) {
+              messageDiv.classList.add(message.sender === username ? 'other-message' : 'my-message');
               const audioElement = document.createElement('audio');
               audioElement.controls = true;
               audioElement.src = message.audio_url;
@@ -231,7 +233,6 @@
               audioElement.style = 'outline: none;'
               messageContent.appendChild(audioElement);
             }
-
 
             // Create a span for the message timestamp and status
             const messageInfo = document.createElement('span');
@@ -278,52 +279,52 @@
     }
 
     function updateLastMessageInMenu(username, message) {
-  console.log('Inside updateLastMessageInMenu:', username, message);
+      console.log('Inside updateLastMessageInMenu:', username, message);
 
-  // Determine the correct username to use for updating the chat menu
-  const recipientUsername = message.sender === "{{ request.user.username }}" ? message.recipient : message.sender;
+      // Determine the correct username to use for updating the chat menu
+      const recipientUsername = message.sender === "{{ request.user.username }}" ? message.recipient : message.sender;
 
-  // Update the chat menu for the recipient
-  const chatMenu = document.querySelector(`.popMenuDescDiv[data-username="${recipientUsername}"]`);
-  if (!chatMenu) {
-    console.warn('Chat menu not found for username:', recipientUsername);
-    return;
-  }
+      // Update the chat menu for the recipient
+      const chatMenu = document.querySelector(`.popMenuDescDiv[data-username="${recipientUsername}"]`);
+      if (!chatMenu) {
+        console.warn('Chat menu not found for username:', recipientUsername);
+        return;
+      }
 
-  const lastMessageElement = chatMenu.querySelector('.last-message');
-  if (lastMessageElement) {
-    // Check if the message content is empty and audio_url exists
-    const displayContent = message.content || (message.audio_url ? "Audio message" : "No messages yet");
-    lastMessageElement.textContent = displayContent;
-    lastMessageElement.title = displayContent;
-  } else {
-    console.warn('Last message element not found for username:', recipientUsername);
-  }
+      const lastMessageElement = chatMenu.querySelector('.last-message');
+      if (lastMessageElement) {
+        // Check if the message content is empty and audio_url exists
+        const displayContent = message.content || (message.audio_url ? "Audio message" : "No messages yet");
+        lastMessageElement.textContent = displayContent;
+        lastMessageElement.title = displayContent;
+      } else {
+        console.warn('Last message element not found for username:', recipientUsername);
+      }
 
-  const usernameDiv = chatMenu.querySelector('.highlightedUserName');
-  if (usernameDiv) {
-    usernameDiv.textContent = message.sender || "user";
-  } else {
-    console.warn('Username element not found for username:', recipientUsername);
-  }
+      const usernameDiv = chatMenu.querySelector('.highlightedUserName');
+      if (usernameDiv) {
+        usernameDiv.textContent = message.sender || "user";
+      } else {
+        console.warn('Username element not found for username:', recipientUsername);
+      }
 
-  const timestampElement = chatMenu.querySelector('.last-message-timestamp');
-  if (timestampElement) {
-    const timestampDate = new Date(message.timestamp);
-    if (isNaN(timestampDate.getTime())) {
-      console.warn('Invalid timestamp:', message.timestamp);
-    } else {
-      let hours = timestampDate.getHours();
-      const minutes = String(timestampDate.getMinutes()).padStart(2, '0');
-      const period = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12 || 12;
-      const formattedTime = `${String(hours).padStart(2, '0')}:${minutes} ${period}`;
-      timestampElement.textContent = formattedTime;
+      const timestampElement = chatMenu.querySelector('.last-message-timestamp');
+      if (timestampElement) {
+        const timestampDate = new Date(message.timestamp);
+        if (isNaN(timestampDate.getTime())) {
+          console.warn('Invalid timestamp:', message.timestamp);
+        } else {
+          let hours = timestampDate.getHours();
+          const minutes = String(timestampDate.getMinutes()).padStart(2, '0');
+          const period = hours >= 12 ? 'PM' : 'AM';
+          hours = hours % 12 || 12;
+          const formattedTime = `${String(hours).padStart(2, '0')}:${minutes} ${period}`;
+          timestampElement.textContent = formattedTime;
+        }
+      } else {
+        console.warn('Timestamp element not found for username:', recipientUsername);
+      }
     }
-  } else {
-    console.warn('Timestamp element not found for username:', recipientUsername);
-  }
-}
 
 
 
@@ -377,52 +378,52 @@
       };
       console.log(username);
       document.querySelector(`#audio_message-${username}`).onclick = function () {
-    startRecording(username);
-  };
-
-  document.querySelector(`#stop-recording-btn-${username}`).onclick = function () {
-    stopRecording(username);
-  }; 
-// Start recording
-let mediaRecorder;
-   let audioChunks = [];
-
-  function startRecording(recipient) {
-    const audiocont = document.getElementById(`recording-container-${recipient}`);
-    audiocont.style.display = 'block';
-
-    navigator.mediaDevices.getUserMedia({ audio: true })
-      .then(stream => {
-        mediaRecorder = new MediaRecorder(stream);
-
-        mediaRecorder.ondataavailable = event => {
-          audioChunks.push(event.data);
-        };
-
-        mediaRecorder.onstop = () => {
-          const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-          sendAudioMessage(audioBlob, recipient);
-        };
-
-        mediaRecorder.start();
-      })
-      .catch(error => console.error('Error accessing media devices.', error));
-  }
-  function stopRecording(recipient) {
-    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-      mediaRecorder.stop();
-      mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-        sendAudioMessage(audioBlob, recipient);
+        startRecording(username);
       };
-      console.log('Recording stopped.');
-    } else {
-      console.error('No active recording to stop.');
-    }
 
-    const audiocont = document.getElementById(`recording-container-${recipient}`);
-    audiocont.style.display = 'none';
-  }
+      document.querySelector(`#stop-recording-btn-${username}`).onclick = function () {
+        stopRecording(username);
+      };
+      // Start recording
+      let mediaRecorder;
+      let audioChunks = [];
+
+      function startRecording(recipient) {
+        const audiocont = document.getElementById(`recording-container-${recipient}`);
+        audiocont.style.display = 'block';
+
+        navigator.mediaDevices.getUserMedia({ audio: true })
+          .then(stream => {
+            mediaRecorder = new MediaRecorder(stream);
+
+            mediaRecorder.ondataavailable = event => {
+              audioChunks.push(event.data);
+            };
+
+            mediaRecorder.onstop = () => {
+              const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+              sendAudioMessage(audioBlob, recipient);
+            };
+
+            mediaRecorder.start();
+          })
+          .catch(error => console.error('Error accessing media devices.', error));
+      }
+      function stopRecording(recipient) {
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+          mediaRecorder.stop();
+          mediaRecorder.onstop = () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+            sendAudioMessage(audioBlob, recipient);
+          };
+          console.log('Recording stopped.');
+        } else {
+          console.error('No active recording to stop.');
+        }
+
+        const audiocont = document.getElementById(`recording-container-${recipient}`);
+        audiocont.style.display = 'none';
+      }
 
       function sendAudioMessage(audioBlob, recipient) {
         console.log('Sending audio message...');
@@ -499,8 +500,8 @@ let mediaRecorder;
         // Create a new message container
         const messageDiv = document.createElement('div');
         messageDiv.classList.add(data.username === "{{ request.user.username }}" ? 'my-message' : 'other-message');
-       
-     
+
+
 
         // Determine if the message is from the current user
         // if (data.username === "{{ request.user.username }}") {
@@ -522,7 +523,7 @@ let mediaRecorder;
         const messageContent = document.createElement('p');
         if (data.message) {
           messageContent.textContent = data.message;
-           messageDiv.className = 'message';
+          messageDiv.className = 'message';
         } else if (data.audio_url) {
 
           const audioElement = document.createElement('audio');
@@ -569,7 +570,7 @@ let mediaRecorder;
         // Scroll to the bottom of the chat to show the new message
         chatMessages.scrollTop = chatMessages.scrollHeight;
       };
-   
+
 
     }
 
