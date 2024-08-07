@@ -282,31 +282,52 @@
     }
 
     function updateLastMessageInMenu(username, message) {
-      const chatMenu = document.querySelector(`.popMenuDescDiv[data-username="${username}"]`);
-      if (chatMenu) {
-        const lastMessageElement = chatMenu.querySelector('.last-message');
-        if (lastMessageElement) {
-          lastMessageElement.textContent = message.content || "Audio message";
-          lastMessageElement.title = message.content || "Audio message";
+  console.log('Inside updateLastMessageInMenu:', username, message);
 
+  // Determine the correct username to use for updating the chat menu
+  const recipientUsername = message.sender !== username ? message.recipient : message.sender;
 
-          const usernameDiv = chatMenu.querySelector('.highlightedUserName');
-          usernameDiv.textContent = message.sender || "user";
+  // Update the chat menu for the recipient
+  const chatMenu = document.querySelector(`.popMenuDescDiv[data-username="${recipientUsername}"]`);
+  if (!chatMenu) {
+    console.warn('Chat menu not found for username:', recipientUsername);
+    return;
+  }
 
-          const timestampElement = chatMenu.querySelector('.last-message-timestamp');
-          if (timestampElement) {
-            const timestampDate = new Date(message.timestamp);
-            let hours = timestampDate.getHours();
-            const minutes = String(timestampDate.getMinutes()).padStart(2, '0');
-            const period = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12 || 12;
-            const formattedTime = `${String(hours).padStart(2, '0')}:${minutes} ${period}`;
-            timestampElement.textContent = formattedTime;
-          }
-        }
-      }
+  const lastMessageElement = chatMenu.querySelector('.last-message');
+  if (lastMessageElement) {
+    // Check if the message content is empty and audio_url exists
+    const displayContent = message.content || (message.audio_url ? "Audio message" : "No messages yet");
+    lastMessageElement.textContent = displayContent;
+    lastMessageElement.title = displayContent;
+  } else {
+    console.warn('Last message element not found for username:', recipientUsername);
+  }
+
+  const usernameDiv = chatMenu.querySelector('.highlightedUserName');
+  if (usernameDiv) {
+    usernameDiv.textContent = message.sender || "user";
+  } else {
+    console.warn('Username element not found for username:', recipientUsername);
+  }
+
+  const timestampElement = chatMenu.querySelector('.last-message-timestamp');
+  if (timestampElement) {
+    const timestampDate = new Date(message.timestamp);
+    if (isNaN(timestampDate.getTime())) {
+      console.warn('Invalid timestamp:', message.timestamp);
+    } else {
+      let hours = timestampDate.getHours();
+      const minutes = String(timestampDate.getMinutes()).padStart(2, '0');
+      const period = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12 || 12;
+      const formattedTime = `${String(hours).padStart(2, '0')}:${minutes} ${period}`;
+      timestampElement.textContent = formattedTime;
     }
-
+  } else {
+    console.warn('Timestamp element not found for username:', recipientUsername);
+  }
+}
 
 
     function setupChat(username) {
