@@ -120,7 +120,7 @@
           <div
             class="svg-container"
             id="audio_message-{{ recipient }}"
-            onclick="startRecording('{{ recipient }}')"
+            
           >
             <?xml version="1.0" encoding="utf-8"?>
             <svg
@@ -143,8 +143,8 @@
             </div>
             <div id="audio-controls">
               <button
-                id="stop-recording-btn"
-                onclick="stopRecording('{{ recipient }}')">
+                id="stop-recording-btn-{{recipient}}"
+                >
                 Stop Recording
               </button>
             </div>

@@ -193,6 +193,8 @@
           console.error('There was a problem with the fetch operation:', error);
         });
     }
+  
+
 
     function loadMessages(username) {
 
@@ -324,6 +326,9 @@
 }
 
 
+
+
+
     function setupChat(username) {
       console.log(username)
       const privateChatURL = `/ws/chat/private/${getChatRoomName("{{request.user.username}}", username)}/`;
@@ -370,7 +375,54 @@
           messageInput.value = ''; // Clear input after sending
         }
       };
+      console.log(username);
+      document.querySelector(`#audio_message-${username}`).onclick = function () {
+    startRecording(username);
+  };
 
+  document.querySelector(`#stop-recording-btn-${username}`).onclick = function () {
+    stopRecording(username);
+  }; 
+// Start recording
+let mediaRecorder;
+   let audioChunks = [];
+
+  function startRecording(recipient) {
+    const audiocont = document.getElementById(`recording-container-${recipient}`);
+    audiocont.style.display = 'block';
+
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+        mediaRecorder = new MediaRecorder(stream);
+
+        mediaRecorder.ondataavailable = event => {
+          audioChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+          sendAudioMessage(audioBlob, recipient);
+        };
+
+        mediaRecorder.start();
+      })
+      .catch(error => console.error('Error accessing media devices.', error));
+  }
+  function stopRecording(recipient) {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      mediaRecorder.stop();
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+        sendAudioMessage(audioBlob, recipient);
+      };
+      console.log('Recording stopped.');
+    } else {
+      console.error('No active recording to stop.');
+    }
+
+    const audiocont = document.getElementById(`recording-container-${recipient}`);
+    audiocont.style.display = 'none';
+  }
 
       function sendAudioMessage(audioBlob, recipient) {
         console.log('Sending audio message...');
@@ -513,7 +565,7 @@
         // Scroll to the bottom of the chat to show the new message
         chatMessages.scrollTop = chatMessages.scrollHeight;
       };
-
+   
 
     }
 
