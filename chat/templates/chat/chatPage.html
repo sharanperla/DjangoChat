@@ -496,18 +496,19 @@ let mediaRecorder;
         //         statusElement.textContent = data.status; // Update status in the chat UI
         //     }
         // }
-        console.log(data, 'data recieved')
         // Create a new message container
         const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message');
+        messageDiv.classList.add(data.username === "{{ request.user.username }}" ? 'my-message' : 'other-message');
+       
+     
 
         // Determine if the message is from the current user
-        if (data.username === "{{ request.user.username }}") {
-          messageDiv.classList.add('my-message');
-        } else {
-          messageDiv.classList.add('other-message');
-        }
-        console.log('data to send', data);
+        // if (data.username === "{{ request.user.username }}") {
+        //   messageDiv.classList.add('my-message');
+        // } else {
+        //   messageDiv.classList.add('other-message');
+        // }
+        // console.log('data to send', data);
 
         updateLastMessageInMenu(data.username, item = {
           content: data.message,
@@ -521,11 +522,14 @@ let mediaRecorder;
         const messageContent = document.createElement('p');
         if (data.message) {
           messageContent.textContent = data.message;
+           messageDiv.className = 'message';
         } else if (data.audio_url) {
 
           const audioElement = document.createElement('audio');
           audioElement.controls = true;
           audioElement.src = data.audio_url;
+          audioElement.classList.add('custom-audio');
+          audioElement.style = 'outline: none;'
           messageContent.appendChild(audioElement);
         }
 
