@@ -271,12 +271,6 @@
             // Scroll to the bottom of the chat to show the new message
             chatInnerContainer.scrollTop = chatInnerContainer.scrollHeight;
           });
-          // Update the last message in the chat menu
-          const lastMessage = messages[messages.length - 1];
-          console.log('last seen message', lastMessage);
-          if (lastMessage) {
-            updateLastMessageInMenu(username, lastMessage);
-          }
         })
         .catch(error => console.error('Error fetching messages:', error));
     }
@@ -285,7 +279,7 @@
   console.log('Inside updateLastMessageInMenu:', username, message);
 
   // Determine the correct username to use for updating the chat menu
-  const recipientUsername = message.sender !== username ? message.recipient : message.sender;
+  const recipientUsername = message.sender === "{{ request.user.username }}" ? message.recipient : message.sender;
 
   // Update the chat menu for the recipient
   const chatMenu = document.querySelector(`.popMenuDescDiv[data-username="${recipientUsername}"]`);
@@ -468,6 +462,7 @@
           id: data.message_id,
           status: data.status,
           sender: data.username,
+          recipient: data.receiver,
           timestamp: "2024-08-06 16:13:05"
         });
         // Create a paragraph element for the message text
