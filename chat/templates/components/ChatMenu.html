@@ -1,32 +1,19 @@
 {% load static %}
 <div class="chatMenu" data-username="{{ recipient }}">
-  <img
-    src="{% static 'images/x-solid.svg' %}"
-    alt="x"
-    class="chatMenuXsvg"
-    id="actionButton"
-  />
+  <img src="{% static 'images/x-solid.svg' %}" alt="x" class="chatMenuXsvg" id="actionButton" />
   <div class="chatHeader" style="justify-content: space-between">
     <div style="display: flex; align-items: center">
       <div class="avatar-container">
-        <img
-          class="homePageUsercardImage"
+        <img class="homePageUsercardImage"
           src="https://plus.unsplash.com/premium_photo-1671656349322-41de944d259b?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          alt="User Avatar"
-        />
+          alt="User Avatar" />
       </div>
       <div>
         <h4>{{ recipient }}</h4>
       </div>
     </div>
-    <div
-      class="chatMenu-dropdown-container"
-      style="display: flex; align-items: center; position: relative"
-    >
-      <div
-        class="icon"
-        onclick="toggleDropdown()"
-        style="
+    <div class="chatMenu-dropdown-container" style="display: flex; align-items: center; position: relative">
+      <div class="icon" onclick="toggleDropdown()" style="
           height: 1rem;
           width: 1rem;
           margin-right: 10px;
@@ -36,19 +23,10 @@
           align-items: center;
           justify-content: center;
           cursor: pointer;
-        "
-      >
-        <img
-          src="{% static 'images/3-dots.svg' %}"
-          alt="More"
-          width="90%"
-          height="90%"
-        />
+        ">
+        <img src="{% static 'images/3-dots.svg' %}" alt="More" width="90%" height="90%" />
       </div>
-      <div
-        class="dropdown"
-        id="dropdownMenu"
-        style="
+      <div class="dropdown" id="dropdownMenu" style="
           display: none;
           position: absolute;
           top: 1.5rem;
@@ -57,8 +35,7 @@
           box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
           border-radius: 5px;
           z-index: 10;
-        "
-      >
+        ">
         <ul style="list-style: none; margin: 0; padding: 0">
           <li onclick="clearChat()" style="padding: 8px 12px; cursor: pointer">
             Clear Chat
@@ -74,10 +51,7 @@
   <div class="chatInput">
     <div style="width: 100%; display: flex; align-items: center">
       <div style="flex: 1">
-        <input
-          type="text"
-          id="chatInput-{{ recipient }}"
-          style="
+        <input type="text" id="chatInput-{{ recipient }}" style="
             width: 100%;
             height: 100%;
             border: 1px solid #ccc;
@@ -85,71 +59,142 @@
             padding: 8px;
             box-sizing: border-box;
             font-size: 1rem;
-          "
-          placeholder="type here.."
-        />
+          " placeholder="type here.." />
       </div>
-        <div class="input-icons">
-          <div class="emoji-container" onclick="toggleEmoji('{{ recipient }}')">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-              <path
-                d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm177.6 62.1C192.8 334.5 218.8 352 256 352s63.2-17.5 78.4-33.9c9-9.7 24.2-10.4 33.9-1.4s10.4 24.2 1.4 33.9c-22 23.8-60 49.4-113.6 49.4s-91.7-25.5-113.6-49.4c-9-9.7-8.4-24.9 1.4-33.9s24.9-8.4 33.9 1.4zM144.4 208a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm192-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"
-              />
-            </svg>
-          </div>
-          <!-- Inside the emoji-picker-container div -->
-          <div style="display: none;" id="emoji-picker-container-{{ recipient }}" class="emoji-picker-container">
-            <div class="emoji" onclick="selectEmoji('😊', '{{ recipient }}')">😊</div>
-            <div class="emoji" onclick="selectEmoji('😂', '{{ recipient }}')">😂</div>
-            <div class="emoji" onclick="selectEmoji('😍', '{{ recipient }}')">😍</div>
-            <div class="emoji" onclick="selectEmoji('🤔', '{{ recipient }}')">🤔</div>
-            <div class="emoji" onclick="selectEmoji('😎', '{{ recipient }}')">😎</div>
-            <!-- Add more emojis as needed -->
-          </div>
-          <div
-            class="svg-container"
-            id="id_message_send_button-{{ recipient }}"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-              <path
-                d="M307 34.8c-11.5 5.1-19 16.6-19 29.2l0 64-112 0C78.8 128 0 206.8 0 304C0 417.3 81.5 467.9 100.2 478.1c2.5 1.4 5.3 1.9 8.1 1.9c10.9 0 19.7-8.9 19.7-19.7c0-7.5-4.3-14.4-9.8-19.5C108.8 431.9 96 414.4 96 384c0-53 43-96 96-96l96 0 0 64c0 12.6 7.4 24.1 19 29.2s25 3 34.4-5.4l160-144c6.7-6.1 10.6-14.7 10.6-23.8s-3.8-17.7-10.6-23.8l-160-144c-9.4-8.5-22.9-10.6-34.4-5.4z"
-              />
-            </svg>
-          </div>
-          <!-- Audio Message Button -->
-          <div
-            class="svg-container"
-            id="audio_message-{{ recipient }}"
-            
-          >
-            <?xml version="1.0" encoding="utf-8"?>
-            <svg
-              fill="#000000"
-              width="800px"
-              height="800px"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M13,4V20a1,1,0,0,1-2,0V4a1,1,0,0,1,2,0ZM8,5A1,1,0,0,0,7,6V18a1,1,0,0,0,2,0V6A1,1,0,0,0,8,5ZM4,7A1,1,0,0,0,3,8v8a1,1,0,0,0,2,0V8A1,1,0,0,0,4,7ZM16,5a1,1,0,0,0-1,1V18a1,1,0,0,0,2,0V6A1,1,0,0,0,16,5Zm4,2a1,1,0,0,0-1,1v8a1,1,0,0,0,2,0V8A1,1,0,0,0,20,7Z"
-              />
-            </svg>
-          </div>
+      <div class="input-icons">
+        <div class="emoji-container" onclick="toggleEmoji('{{ recipient }}')">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+            <path
+              d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm177.6 62.1C192.8 334.5 218.8 352 256 352s63.2-17.5 78.4-33.9c9-9.7 24.2-10.4 33.9-1.4s10.4 24.2 1.4 33.9c-22 23.8-60 49.4-113.6 49.4s-91.7-25.5-113.6-49.4c-9-9.7-8.4-24.9 1.4-33.9s24.9-8.4 33.9 1.4zM144.4 208a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm192-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
+          </svg>
+        </div>
+        <!-- Inside the emoji-picker-container div -->
+        <div style="display: none;" id="emoji-picker-container-{{ recipient }}" class="emoji-picker-container">
+          <div class="emoji" onclick="selectEmoji('😊', '{{ recipient }}')">😊</div>
+          <div class="emoji" onclick="selectEmoji('😂', '{{ recipient }}')">😂</div>
+          <div class="emoji" onclick="selectEmoji('😍', '{{ recipient }}')">😍</div>
+          <div class="emoji" onclick="selectEmoji('🤔', '{{ recipient }}')">🤔</div>
+          <div class="emoji" onclick="selectEmoji('😎', '{{ recipient }}')">😎</div>
+          <div class="emoji" onclick="selectEmoji('😉', '{{ recipient }}')">😉</div>
+          <div class="emoji" onclick="selectEmoji('😢', '{{ recipient }}')">😢</div>
+          <div class="emoji" onclick="selectEmoji('😜', '{{ recipient }}')">😜</div>
+          <div class="emoji" onclick="selectEmoji('😭', '{{ recipient }}')">😭</div>
+          <div class="emoji" onclick="selectEmoji('😡', '{{ recipient }}')">😡</div>
+          <div class="emoji" onclick="selectEmoji('😳', '{{ recipient }}')">😳</div>
+          <div class="emoji" onclick="selectEmoji('😇', '{{ recipient }}')">😇</div>
+          <div class="emoji" onclick="selectEmoji('😈', '{{ recipient }}')">😈</div>
+          <div class="emoji" onclick="selectEmoji('😬', '{{ recipient }}')">😬</div>
+          <div class="emoji" onclick="selectEmoji('😴', '{{ recipient }}')">😴</div>
+          <div class="emoji" onclick="selectEmoji('😌', '{{ recipient }}')">😌</div>
+          <div class="emoji" onclick="selectEmoji('😋', '{{ recipient }}')">😋</div>
+          <div class="emoji" onclick="selectEmoji('😛', '{{ recipient }}')">😛</div>
+          <div class="emoji" onclick="selectEmoji('😤', '{{ recipient }}')">😤</div>
+          <div class="emoji" onclick="selectEmoji('😮', '{{ recipient }}')">😮</div>
+          <div class="emoji" onclick="selectEmoji('😱', '{{ recipient }}')">😱</div>
+          <div class="emoji" onclick="selectEmoji('😵', '{{ recipient }}')">😵</div>
+          <div class="emoji" onclick="selectEmoji('😷', '{{ recipient }}')">😷</div>
+          <div class="emoji" onclick="selectEmoji('🙁', '{{ recipient }}')">🙁</div>
+          <div class="emoji" onclick="selectEmoji('😠', '{{ recipient }}')">😠</div>
+          <div class="emoji" onclick="selectEmoji('😇', '{{ recipient }}')">😇</div>
+          <div class="emoji" onclick="selectEmoji('😏', '{{ recipient }}')">😏</div>
+          <div class="emoji" onclick="selectEmoji('🤤', '{{ recipient }}')">🤤</div>
+          <div class="emoji" onclick="selectEmoji('🤢', '{{ recipient }}')">🤢</div>
+          <div class="emoji" onclick="selectEmoji('🤧', '{{ recipient }}')">🤧</div>
+          <div class="emoji" onclick="selectEmoji('🤪', '{{ recipient }}')">🤪</div>
+          <div class="emoji" onclick="selectEmoji('🤫', '{{ recipient }}')">🤫</div>
+          <div class="emoji" onclick="selectEmoji('🤭', '{{ recipient }}')">🤭</div>
+          <div class="emoji" onclick="selectEmoji('🤯', '{{ recipient }}')">🤯</div>
+          <div class="emoji" onclick="selectEmoji('🤩', '{{ recipient }}')">🤩</div>
+          <div class="emoji" onclick="selectEmoji('🥳', '{{ recipient }}')">🥳</div>
+          <div class="emoji" onclick="selectEmoji('🥺', '{{ recipient }}')">🥺</div>
+          <div class="emoji" onclick="selectEmoji('🤑', '{{ recipient }}')">🤑</div>
+          <div class="emoji" onclick="selectEmoji('🤠', '{{ recipient }}')">🤠</div>
+          <div class="emoji" onclick="selectEmoji('🤡', '{{ recipient }}')">🤡</div>
+          <div class="emoji" onclick="selectEmoji('🤥', '{{ recipient }}')">🤥</div>
+          <div class="emoji" onclick="selectEmoji('🤓', '{{ recipient }}')">🤓</div>
+          <div class="emoji" onclick="selectEmoji('🤔', '{{ recipient }}')">🤔</div>
+          <div class="emoji" onclick="selectEmoji('🤨', '{{ recipient }}')">🤨</div>
+          <div class="emoji" onclick="selectEmoji('🤐', '{{ recipient }}')">🤐</div>
+          <div class="emoji" onclick="selectEmoji('🧐', '{{ recipient }}')">🧐</div>
+          <div class="emoji" onclick="selectEmoji('😅', '{{ recipient }}')">😅</div>
+          <div class="emoji" onclick="selectEmoji('😞', '{{ recipient }}')">😞</div>
+          <div class="emoji" onclick="selectEmoji('😕', '{{ recipient }}')">😕</div>
+          <div class="emoji" onclick="selectEmoji('😯', '{{ recipient }}')">😯</div>
+          <div class="emoji" onclick="selectEmoji('😲', '{{ recipient }}')">😲</div>
+          <div class="emoji" onclick="selectEmoji('😶', '{{ recipient }}')">😶</div>
+          <div class="emoji" onclick="selectEmoji('🙃', '{{ recipient }}')">🙃</div>
+          <div class="emoji" onclick="selectEmoji('😎', '{{ recipient }}')">😎</div>
+          <div class="emoji" onclick="selectEmoji('😜', '{{ recipient }}')">😜</div>
+          <div class="emoji" onclick="selectEmoji('🤐', '{{ recipient }}')">🤐</div>
+          <div class="emoji" onclick="selectEmoji('🤒', '{{ recipient }}')">🤒</div>
+          <div class="emoji" onclick="selectEmoji('🤕', '{{ recipient }}')">🤕</div>
+          <div class="emoji" onclick="selectEmoji('🤮', '{{ recipient }}')">🤮</div>
+          <div class="emoji" onclick="selectEmoji('🤯', '{{ recipient }}')">🤯</div>
+          <div class="emoji" onclick="selectEmoji('🤤', '{{ recipient }}')">🤤</div>
+          <div class="emoji" onclick="selectEmoji('🥴', '{{ recipient }}')">🥴</div>
+          <div class="emoji" onclick="selectEmoji('🥺', '{{ recipient }}')">🥺</div>
+          <div class="emoji" onclick="selectEmoji('🥱', '{{ recipient }}')">🥱</div>
+          <div class="emoji" onclick="selectEmoji('😮‍💨', '{{ recipient }}')">😮‍💨</div>
+          <div class="emoji" onclick="selectEmoji('😵‍💫', '{{ recipient }}')">😵‍💫</div>
+          <div class="emoji" onclick="selectEmoji('🥶', '{{ recipient }}')">🥶</div>
+          <div class="emoji" onclick="selectEmoji('🥵', '{{ recipient }}')">🥵</div>
+          <div class="emoji" onclick="selectEmoji('🤒', '{{ recipient }}')">🤒</div>
+          <div class="emoji" onclick="selectEmoji('🤕', '{{ recipient }}')">🤕</div>
+          <div class="emoji" onclick="selectEmoji('🤢', '{{ recipient }}')">🤢</div>
+          <div class="emoji" onclick="selectEmoji('🤧', '{{ recipient }}')">🤧</div>
+          <div class="emoji" onclick="selectEmoji('🥳', '{{ recipient }}')">🥳</div>
+          <div class="emoji" onclick="selectEmoji('🥸', '{{ recipient }}')">🥸</div>
+          <div class="emoji" onclick="selectEmoji('🥺', '{{ recipient }}')">🥺</div>
+          <div class="emoji" onclick="selectEmoji('🥳', '{{ recipient }}')">🥳</div>
+          <div class="emoji" onclick="selectEmoji('🧐', '{{ recipient }}')">🧐</div>
+          <div class="emoji" onclick="selectEmoji('😏', '{{ recipient }}')">😏</div>
+          <div class="emoji" onclick="selectEmoji('😒', '{{ recipient }}')">😒</div>
+          <div class="emoji" onclick="selectEmoji('😕', '{{ recipient }}')">😕</div>
+          <div class="emoji" onclick="selectEmoji('😯', '{{ recipient }}')">😯</div>
+          <div class="emoji" onclick="selectEmoji('😲', '{{ recipient }}')">😲</div>
+          <div class="emoji" onclick="selectEmoji('😟', '{{ recipient }}')">😟</div>
+          <div class="emoji" onclick="selectEmoji('😬', '{{ recipient }}')">😬</div>
+          <div class="emoji" onclick="selectEmoji('😩', '{{ recipient }}')">😩</div>
+          <div class="emoji" onclick="selectEmoji('😰', '{{ recipient }}')">😰</div>
+          <div class="emoji" onclick="selectEmoji('😱', '{{ recipient }}')">😱</div>
+          <div class="emoji" onclick="selectEmoji('😵', '{{ recipient }}')">😵</div>
+          <div class="emoji" onclick="selectEmoji('😷', '{{ recipient }}')">😷</div>
+          <div class="emoji" onclick="selectEmoji('🙁', '{{ recipient }}')">🙁</div>
+          <div class="emoji" onclick="selectEmoji('😠', '{{ recipient }}')">😠</div>
+          <div class="emoji" onclick="selectEmoji('😡', '{{ recipient }}')">😡</div>
+          <div class="emoji" onclick="selectEmoji('😢', '{{ recipient }}')">😢</div>
+          <div class="emoji" onclick="selectEmoji('😭', '{{ recipient }}')">😭</div>
+          <div class="emoji" onclick="selectEmoji('😤', '{{ recipient }}')">😤</div>
 
-          <!-- Recording Indicator and Controls -->
-          <div id="recording-container-{{ recipient }}" style="display: none">
-            <div id="recording-indicator">
-              <span>Recording...</span>
-            </div>
-            <div id="audio-controls">
-              <button
-                id="stop-recording-btn-{{recipient}}"
-                >
-                Stop Recording
-              </button>
-            </div>
+          <!-- Add more emojis as needed -->
+        </div>
+        <div class="svg-container" id="id_message_send_button-{{ recipient }}">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+            <path
+              d="M307 34.8c-11.5 5.1-19 16.6-19 29.2l0 64-112 0C78.8 128 0 206.8 0 304C0 417.3 81.5 467.9 100.2 478.1c2.5 1.4 5.3 1.9 8.1 1.9c10.9 0 19.7-8.9 19.7-19.7c0-7.5-4.3-14.4-9.8-19.5C108.8 431.9 96 414.4 96 384c0-53 43-96 96-96l96 0 0 64c0 12.6 7.4 24.1 19 29.2s25 3 34.4-5.4l160-144c6.7-6.1 10.6-14.7 10.6-23.8s-3.8-17.7-10.6-23.8l-160-144c-9.4-8.5-22.9-10.6-34.4-5.4z" />
+          </svg>
+        </div>
+        <!-- Audio Message Button -->
+        <div class="svg-container" id="audio_message-{{ recipient }}">
+          <?xml version="1.0" encoding="utf-8"?>
+          <svg fill="#000000" width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M13,4V20a1,1,0,0,1-2,0V4a1,1,0,0,1,2,0ZM8,5A1,1,0,0,0,7,6V18a1,1,0,0,0,2,0V6A1,1,0,0,0,8,5ZM4,7A1,1,0,0,0,3,8v8a1,1,0,0,0,2,0V8A1,1,0,0,0,4,7ZM16,5a1,1,0,0,0-1,1V18a1,1,0,0,0,2,0V6A1,1,0,0,0,16,5Zm4,2a1,1,0,0,0-1,1v8a1,1,0,0,0,2,0V8A1,1,0,0,0,20,7Z" />
+          </svg>
+        </div>
+
+        <!-- Recording Indicator and Controls -->
+        <div id="recording-container-{{ recipient }}" style="display: none">
+          <div id="recording-indicator">
+            <span>Recording...</span>
+          </div>
+          <div id="audio-controls">
+            <button id="stop-recording-btn-{{recipient}}">
+              Stop Recording
+            </button>
           </div>
         </div>
+      </div>
     </div>
   </div>
 </div>
