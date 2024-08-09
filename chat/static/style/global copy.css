@@ -20,7 +20,6 @@ body {
   padding: 10px;
   border-bottom: 1px solid #ddd;
   height: 30px;
-  /* Fixed height */
   display: flex;
   justify-content: center;
   align-items: center;
